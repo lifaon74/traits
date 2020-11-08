@@ -13,7 +13,7 @@ const defaultConfig = {
 const config = {
   ...defaultConfig,
   githubPage: 'lifaon74/traits',
-  packageName: '@lifaon/trait',
+  packageName: '@lifaon/traits',
   libName: 'traits',
   author: 'Valentin Richard',
 };
@@ -24,7 +24,7 @@ const DEST = $path.join(ROOT, '..', config.libName);
 
 const tags = Object.entries({
   'lifaon74/traits': config.githubPage,
-  '@lifaon/trait': config.packageName,
+  '@lifaon/traits': config.packageName,
   'traits': config.libName,
   'Valentin Richard': config.author,
 });
