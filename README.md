@@ -14,12 +14,15 @@ yarn add @lifaon/traits
 npm i @lifaon/traits --save
 ```
 
-Entry point: `index.js`, others may contain some private or garbage experiment code. I recommend you to use rollup to import/bundle the package,
+Entry point: `index.js`, others files contains internally used functions or methods. I recommend you to use rollup to import/bundle the package,
 but you may use an already bundled version in `bundles/`.
 
 You may also use unpkg: `https://unpkg.com/@lifaon/traits`
 
-[SOME EXAMPLES HERE](./examples/README.md)
+**WARNING:** This library reached a certain level of maturity, and is safe to use.
+However, I won't recommend using it for organization work, as it may still evolve.
+
+[SOME EXAMPLES HERE]: <>(./examples/README.md)
 
 ### Table of contents ###
 <!-- toc -->
@@ -66,21 +69,21 @@ It is intended to reduce some limitations of single inheritance by enabling deve
 <summary>show</summary>
 <p>
 
-**Try or use them if:**
+**Try them if:**
 
 - you want to provide a well-defined and very strong typed library, based on classes
 - you want reusable methods across various classes, and mixins and factories are not enough for you
 - you want to share your lib piece by piece and let the user choose which part they want (allows very efficient tree shacking and minification)
 - you want to hide or externalize the internal logic of your classes
 
-**Don't use them if:**
+**You probably don't need them if:**
 
 - you aim for fast coding: traits are verbose, and require strict typing to be more efficient.
 - your code is not a library (ex: ux, component, server script, etc.)
 
 Traits enforce you to code in a very strict manner, which is perfect for library authors requiring a strict framework and typing
 to avoid errors and bugs (of course completed by tests). It's important when they are sometimes shared with millions of users.
-In another hand, Trais are not recommended for typical organization work (building ux component, application, etc...).
+In another hand, Traits are not recommended for typical organization work (building ux component, application, etc...).
 
 </p>
 </details>
