@@ -19,6 +19,9 @@ but you may use an already bundled version in `bundles/`.
 
 You may also use unpkg: `https://unpkg.com/@lifaon/traits`
 
+- esnext, minified, gzipped, core version is less than 2.3KB !
+- esnext, minified, gzipped version with build in traits is less than 3.2KB.
+
 **WARNING:** This library reached a certain level of maturity, and is safe to use.
 However, I won't recommend using it for organization work, as it may still evolve.
 
