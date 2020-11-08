@@ -445,7 +445,7 @@ declare function OverrideTraitImplementations(traitImplementations: TImplementat
 ```
 
 This function removes from `traitImplementations` (without modifying the original array) all implementations overridden (sharing similar traits) by `newTraitImplementations`
-and appends (concat) newTraitImplementations'
+and appends (concat) `newTraitImplementations`
 
 This is useful, if you want to create a class which implements some Implementations from another, and override some of them.
 
@@ -507,7 +507,7 @@ declare function TraitsAreImplementedBy<GTraits extends any[], GTarget>(traits: 
 }, target: GTarget): target is TWithImplementedTraits<GTarget, GTraits>;
 ```
 
-Like [TraitIsImplementedBy](#traitisimplementedby) **TODO LINK** but for many traits.
+Like [TraitIsImplementedBy](#traitisimplementedby) but for many traits.
 
 ---
 
