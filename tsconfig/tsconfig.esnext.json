@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "target": "esnext",
+    "outDir": "../dist/esnext"
+  }
+}

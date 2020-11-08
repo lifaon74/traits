@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "alwaysStrict": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "strictFunctionTypes": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitUseStrict": false,
+    "suppressImplicitAnyIndexErrors": true,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": false,
+    "experimentalDecorators": true,
+    "stripInternal": false,
+    "target": "es5",
+    "outDir": "./dist",
+    "lib": [
+      "esnext",
+      "dom"
+    ]
+  },
+  "formatCodeOptions": {
+    "indentSize": 2,
+    "tabSize": 2
+  },
+  "bazelOptions": {
+    "suppressTsconfigOverrideWarnings": true
+  }
+}
