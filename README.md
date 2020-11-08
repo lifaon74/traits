@@ -149,6 +149,8 @@ I wanted to have the same possibilities on javascript, so I wrote a POC in Types
 </p>
 </details>
 
+---
+
 ### Example: NumberLike
 
 Let me introduce you to this lib through an example: building a wrapper around a number.
