@@ -536,7 +536,8 @@ const num2 = { value: 5 };
 console.log(CallTargetTraitMethodOrDefaultImplementation(num2, TraitAdd, 'add', [{ value: 2 }], ImplTraitAddForNumberStruct)); // { value: 7 }
  ```
 
-**WARN:** this function must be used with caution. It is not intended to be used directly from the methods of your traits or implementations.
+**WARN:** this function must be used with parsimony and caution.
+It should not be used directly from the methods of your traits or implementations, or at least avoided when possible.
 Instead, you should create many specialized Implementations or Traits:
 
 **DONT**
@@ -544,8 +545,8 @@ Instead, you should create many specialized Implementations or Traits:
 ```ts
 /**
  * This Implementation will work for any kind of INumberStruct, having 'add'/'negate' or not,
- * But it forces extra and unecessary conditional branching or function calls; and checks if variables implement some traits.
- * This is not efficient for both the execution time, and the bundle size
+ * But it runs many conditional branching and function calls (workload that could be avoided or simplified)
+ * This is not max efficient for both the execution time, and the bundle size
  */
 @Impl()
 export abstract class ImplTraitSubtractForNumberStruct<GSelf extends INumberStruct> extends TraitSubtract<GSelf, INumberStruct, INumberStruct> {
@@ -569,7 +570,7 @@ export abstract class ImplTraitSubtractForNumberStruct<GSelf extends INumberStru
 }
 ```
 
-**INSTEAD DO**
+**INSTEAD PREFER**
 
 ```ts
 /**
@@ -600,5 +601,5 @@ And then use the proper implementation depending on the other implementations on
 
 Creating and using many implementations for different data structures is far more efficient that doing conditional branching (for both execution time and bundle size).
 
-**Consider using this function as last resort**
+**Consider using this function as last resort, or only if you really don't care of the performances of your app**
 

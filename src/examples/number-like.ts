@@ -1,12 +1,12 @@
-import { TraitSubtract } from '../build-in-traits/arithmetic/trait-subtract/trait-subtract';
-import { TraitSqrt } from '../build-in-traits/arithmetic/math/trait-sqrt/trait-sqrt';
-import { TraitNegate } from '../build-in-traits/arithmetic/trait-negate/trait-negate';
-import { TraitMultiply } from '../build-in-traits/arithmetic/trait-multiply/trait-multiply';
-import { TraitDivide } from '../build-in-traits/arithmetic/trait-divide/trait-divide';
-import { createReference, ctf } from '../build-in-traits/others/trait-as/trait-as-functions';
-import { TraitToString } from '../build-in-traits/others/trait-to-string/trait-to-string';
-import { TraitAs } from '../build-in-traits/others/trait-as/trait-as';
-import { TraitAdd } from '../build-in-traits/arithmetic/trait-add/trait-add';
+import { TraitSubtract } from '../built-in-traits/arithmetic/trait-subtract/trait-subtract';
+import { TraitSqrt } from '../built-in-traits/arithmetic/math/trait-sqrt/trait-sqrt';
+import { TraitNegate } from '../built-in-traits/arithmetic/trait-negate/trait-negate';
+import { TraitMultiply } from '../built-in-traits/arithmetic/trait-multiply/trait-multiply';
+import { TraitDivide } from '../built-in-traits/arithmetic/trait-divide/trait-divide';
+import { createReference, ctf } from '../built-in-traits/others/trait-as/trait-as-functions';
+import { TraitToString } from '../built-in-traits/others/trait-to-string/trait-to-string';
+import { TraitAs } from '../built-in-traits/others/trait-as/trait-as';
+import { TraitAdd } from '../built-in-traits/arithmetic/trait-add/trait-add';
 import { Impl } from '../core/traits/implementation-decorator';
 import { AssembleTraitImplementations } from '../core/traits/assemble-trait-implementations';
 
