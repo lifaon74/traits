@@ -1,7 +1,7 @@
 {
   "_name": "test",
   "name": "@lifaon/traits",
-  "version": "1.1.0-beta",
+  "version": "1.1.0-beta.1",
   "description": "Description",
   "main": "index.js",
   "scripts": {
@@ -74,7 +74,7 @@
     "type": "git",
     "url": "https://github.com/lifaon74/traits"
   },
-  "keywords": [],
+  "keywords": ["trait", "traits", "factory", "factories", "mixin", "mixins", "class", "classes", "rust"],
   "author": "Valentin Richard",
   "license": "MIT",
   "access": "public",

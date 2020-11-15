@@ -128,7 +128,7 @@ export class ImplTraitSqrtForNumber<GSelf extends INumber> extends TraitSqrt<GSe
 }
 
 
-export interface INumber extends INumberStruct,
+export interface INumberImplementations extends
   ImplTraitAsForNumberStruct<INumber>,
   ImplTraitToStringForNumberStruct<INumber>,
   ImplTraitNegateForNumber<INumber>,
@@ -138,11 +138,7 @@ export interface INumber extends INumberStruct,
   ImplTraitSqrtForNumber<INumber>
 {}
 
-export interface IAssembledNumberImplementations {
-  new(): INumber;
-}
-
-export const NumberImplementationsCollection = [
+export const NumberImplementations = [
   ImplTraitAsForNumberStruct,
   ImplTraitToStringForNumberStruct,
   ImplTraitNegateForNumber,
@@ -153,9 +149,16 @@ export const NumberImplementationsCollection = [
   ImplTraitSqrtForNumber,
 ];
 
-const AssembledNumberImplementations = AssembleTraitImplementations<IAssembledNumberImplementations>(NumberImplementationsCollection);
+export interface INumberImplementationsConstructor {
+  new(): INumberImplementations;
+}
 
-export class NumberLike extends AssembledNumberImplementations implements INumber {
+export interface INumber extends INumberStruct, INumberImplementations {
+}
+
+const NumberImplementationsConstructor = AssembleTraitImplementations<INumberImplementationsConstructor>(NumberImplementations);
+
+export class NumberLike extends NumberImplementationsConstructor implements INumber {
   static from(input: INumberStruct): INumber {
     return new NumberLike(input.value);
   }
