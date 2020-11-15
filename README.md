@@ -19,13 +19,13 @@ but you may use an already bundled version in `bundles/`.
 
 You may also use unpkg: `https://unpkg.com/@lifaon/traits`
 
-- [esnext, minified, gzipped, core version](https://unpkg.com/@lifaon/traits@1.0.0/bundles/traits.esnext.core.umd.min.js) is less than 2.3KB !
-- [esnext, minified, gzipped version with build in traits](https://unpkg.com/@lifaon/traits@1.0.0/bundles/traits.esnext.umd.min.js) is less than 3.2KB.
+- [esnext, minified, gzipped, core version](https://unpkg.com/@lifaon/traits@1.0.0/bundles/traits.esnext.core.umd.min.js) is less than 3KB !
+- [esnext, minified, gzipped version with build in traits](https://unpkg.com/@lifaon/traits@1.0.0/bundles/traits.esnext.umd.min.js) is less than 4KB.
 
 **WARNING:** This library reached a certain level of maturity, and is safe to use.
 However, I won't recommend using it for organization work, as it may still evolve.
 
-[SOME EXAMPLES HERE]: <>(./examples/README.md)
+[SOME EXAMPLES HERE](./examples/README.md)
 
 ### Table of contents ###
 <!-- toc -->
@@ -48,6 +48,8 @@ However, I won't recommend using it for organization work, as it may still evolv
   * [OverrideTraitImplementations](#overridetraitimplementations)
   * [TraitIsImplementedBy](#traitisimplementedby)
   * [TraitsAreImplementedBy](#traitsareimplementedby)
+  * [CallTargetTraitMethodOrDefaultImplementation](#calltargettraitmethodordefaultimplementation)
+
     
 
 ### Definition
@@ -503,50 +505,100 @@ Instead, for example, you may count on Typescript or cache the result.
 
 ```ts
 declare function TraitsAreImplementedBy<GTraits extends any[], GTarget>(traits: {
-    [GKey in keyof GTraits]: TAbstractClass<GTraits[GKey]>;
+  [GKey in keyof GTraits]: TAbstractClass<GTraits[GKey]>;
 }, target: GTarget): target is TWithImplementedTraits<GTarget, GTraits>;
 ```
 
 Like [TraitIsImplementedBy](#traitisimplementedby) but for many traits.
 
----
-
-### Good practices
-
-*Do not check directly if a property exists in the methods of your traits*:
+#### CallTargetTraitMethodOrDefaultImplementation
 
 ```ts
-// AVOID
-@Trait()
-export abstract class TraitSubtractUsingAddAndNegate<GSelf, GValue> extends TraitSubtract<GSelf, GValue, TInferTraitAddGReturn<GSelf>> {
-  subtract(this: GSelf, value: GValue): TInferTraitAddGReturn<GSelf> {
-    if (
-      TraitIsImplementedBy(TraitAdd, this)
-      && TraitIsImplementedBy(TraitNegate, value)
-    ) {
-      return this.add(value.negate());  
-    } else {
-      throw new Error(`Lack of 'add' and 'negate'`);
-    }  
+declare function CallTargetTraitMethodOrDefaultImplementation<GTrait, GMethodName extends (keyof GTrait)>(
+  target: any,
+  trait: TAbstractClass<GTrait>,
+  methodName: GMethodName,
+  args: Parameters<TExtractTraitMethod<GTrait, GMethodName>>,
+  defaultImplementation: TConstructor<GTrait>
+): ReturnType<TExtractTraitMethod<GTrait, GMethodName>>;
+```
+
+If `target` implements `trait`, the function does `target[methodName].apply(target, args)`. 
+Else, the `defaultImplementation` is used: `defaultImplementation.prototype[methodName].apply(target, args)`
+
+*Example:*
+ 
+ ```ts
+const num1 = new NumberLike(5);
+console.log(CallTargetTraitMethodOrDefaultImplementation(num1, TraitAdd, 'add', [{ value: 2 }], ImplTraitAddForNumberStruct)); // NumberLike(7)
+
+const num2 = { value: 5 };
+console.log(CallTargetTraitMethodOrDefaultImplementation(num2, TraitAdd, 'add', [{ value: 2 }], ImplTraitAddForNumberStruct)); // { value: 7 }
+ ```
+
+**WARN:** this function must be used with caution. It is not intended to be used directly from the methods of your traits or implementations.
+Instead, you should create many specialized Implementations or Traits:
+
+**DONT**
+
+```ts
+/**
+ * This Implementation will work for any kind of INumberStruct, having 'add'/'negate' or not,
+ * But it forces extra and unecessary conditional branching or function calls; and checks if variables implement some traits.
+ * This is not efficient for both the execution time, and the bundle size
+ */
+@Impl()
+export abstract class ImplTraitSubtractForNumberStruct<GSelf extends INumberStruct> extends TraitSubtract<GSelf, INumberStruct, INumberStruct> {
+  subtract(this: GSelf, value: INumberStruct): INumberStruct {
+    return CallTargetTraitMethodOrDefaultImplementation(
+      this,
+      TraitAdd,
+      'add',
+      [
+        CallTargetTraitMethodOrDefaultImplementation(
+          value,
+          TraitNegate,
+          'negate',
+          [value],
+          ImplTraitNegateForNumberStruct
+        )
+      ],
+      ImplTraitAddForNumberStruct
+    );
   }
 }
 ```
 
-Instead, you should rely on the typing of Typescript:
+**INSTEAD DO**
 
 ```ts
-// BETTER
-@Trait()
-export abstract class TraitSubtractUsingAddAndNegate<GSelf extends TraitAdd<GSelf, any, any>, GValue extends TraitNegate<GValue, TInferTraitAddGValue<GSelf>>> extends TraitSubtract<GSelf, GValue, TInferTraitAddGReturn<GSelf>> {
-  subtract(this: GSelf, value: GValue): TInferTraitAddGReturn<GSelf> {
-    return this.add(value.negate());
+/**
+ * Fastest implementation
+ */
+@Impl()
+export class ImplTraitSubtractForNumberStruct<GSelf extends INumberStruct> extends TraitSubtract<GSelf, INumberStruct, INumberStruct> {
+  subtract(this: GSelf, value: INumberStruct): INumberStruct {
+    return { value: this.value - value.value };
   }
+}
+
+/**
+ * But maybe one user of your lib, prefer to use 'add' and 'negate'
+ */
+export type TImplTraitSubtractUsingAddAndNegateForNumberStructGSelfConstraint<GSelf> = INumberStruct
+  & TraitAdd<GSelf, GSelf, GSelf>;
+
+export type TImplTraitSubtractUsingAddAndNegateForNumberStructGValue<GSelf extends TraitAdd<GSelf, GSelf, GSelf>> = INumberStruct
+  & TraitNegate<INumberStruct, TInferTraitAddGValue<GSelf>>;
+
+@Impl()
+export class ImplTraitSubtractUsingAddAndNegateForNumberStruct<GSelf extends TImplTraitSubtractUsingAddAndNegateForNumberStructGSelfConstraint<GSelf>> extends TraitSubtractUsingAddAndNegate<GSelf, TImplTraitSubtractUsingAddAndNegateForNumberStructGValue<GSelf>> {
 }
 ```
 
+And then use the proper implementation depending on the other implementations on your classes.
 
-*Keep GSelf with fewer constraints as possible in your traits*, instead constrain it on your implementations.
+Creating and using many implementations for different data structures is far more efficient that doing conditional branching (for both execution time and bundle size).
 
-*Because Traits are not common for javascript developers, typing them may seem very complex at first glance*.
-Don't hesitate to take inspiration from the examples, or if you find a genius pattern, to share it in this repo.
+**Consider using this function as last resort**
 

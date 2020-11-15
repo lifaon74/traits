@@ -1,10 +1,10 @@
 import { IImplementationDetails, IMPLEMENTATIONS } from './implementation-decorator';
-import { ImplementationExtendsTrait } from './trait-is-implemented-by';
 import { IMethod } from './extract-trait-or-implementation-own-methods';
 import { ITraitDetails } from './trait-decorator';
 import { TConstructor } from '../types/class-types';
 import { HasProperty } from '../object-helpers/object-has-property';
 import { DefineProperty } from '../object-helpers/object-define-property';
+import { ImplementationDetailsExtendsTrait } from './implementation-details-extends-trait';
 
 
 /**
@@ -165,27 +165,6 @@ export function ApplyTraitImplementation(
   );
 }
 
-/**
- * Creates a new class which implements many Implementations
- */
-export function AssembleTraitImplementations<GAssembledImplementations extends TConstructor>(
-  traitImplementations: TImplementationsCollection,
-  baseClass?: TConstructor,
-): GAssembledImplementations {
-  const _class: any = (baseClass === void 0)
-    ? class Impl {
-    }
-    : class Impl extends baseClass {
-    };
-
-  for (let i = 0, l = traitImplementations.length; i < l; i++) {
-    const traitImplementation: TConstructor = traitImplementations[i];
-    ApplyTraitImplementation(_class.prototype, traitImplementation);
-  }
-
-  return _class;
-}
-
 
 /**
  * Removes from 'traitImplementations' (without modifying the original array) all implementations overridden (sharing similar traits) by 'newTraitImplementations'
@@ -202,7 +181,7 @@ export function OverrideTraitImplementations(
       const traitImplementationDetails: IImplementationDetails = GetImplementationDetailsOrThrow(traitImplementation);
       return newTraitImplementationsDetails
         .every((newTraitImplementationDetails: IImplementationDetails) => {
-          return !ImplementationExtendsTrait(traitImplementationDetails, newTraitImplementationDetails.forTrait.trait);
+          return !ImplementationDetailsExtendsTrait(traitImplementationDetails, newTraitImplementationDetails.forTrait.trait);
         });
     })
     .concat(newTraitImplementations);

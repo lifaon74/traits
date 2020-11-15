@@ -8,7 +8,7 @@ import { TraitToString } from '../build-in-traits/others/trait-to-string/trait-t
 import { TraitAs } from '../build-in-traits/others/trait-as/trait-as';
 import { TraitAdd } from '../build-in-traits/arithmetic/trait-add/trait-add';
 import { Impl } from '../core/traits/implementation-decorator';
-import { AssembleTraitImplementations } from '../core/traits/apply-trait-implementation';
+import { AssembleTraitImplementations } from '../core/traits/assemble-trait-implementations';
 
 
 export interface INumberStruct {

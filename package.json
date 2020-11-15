@@ -1,7 +1,7 @@
 {
   "_name": "test",
   "name": "@lifaon/traits",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Description",
   "main": "index.js",
   "scripts": {
@@ -66,6 +66,8 @@
     "prenodemon_dev_bodejs": "wait-on ./dist/cjs/app.js",
     "nodemon_dev_bodejs": "nodemon --delay 1500ms \"./dist/cjs/app.js\"",
 
+    "copy_test": "shx cp -r ./dist/package/. /home/valentin/code/dev/tests/common-classes/node_modules/@lifaon/traits",
+    "build_test": "npm run build_all && npm run copy_test",
     "toc": "markdown-toc README.md"
   },
   "repository": {

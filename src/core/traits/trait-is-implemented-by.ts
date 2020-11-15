@@ -1,36 +1,11 @@
-import { ITraitDetails, TRAITS } from './trait-decorator';
+import { TRAITS } from './trait-decorator';
 import { IImplementationDetails } from './implementation-decorator';
 import { ANY_TO_IMPLEMENTATIONS_MAP } from './apply-trait-implementation';
 import { TupleToIntersection } from '../types/tuple-to-intersection';
 import { GetPrototypeOf } from '../object-helpers/object-get-prototype-of';
 import { TAbstractClass } from '../types/class-types';
+import { ImplementationDetailsExtendsTrait } from './implementation-details-extends-trait';
 
-
-/**
- * Returns true if 'traitDetails' is or extends 'trait'
- */
-function TraitExtendsTrait(
-  traitDetails: ITraitDetails | undefined,
-  trait: TAbstractClass,
-): boolean {
-  while (traitDetails !== void 0) {
-    if (traitDetails.trait === trait) {
-      return true;
-    }
-    traitDetails = traitDetails.parent;
-  }
-  return false;
-}
-
-/**
- * Returns true if 'traitImplementationDetails' extends 'trait'
- */
-export function ImplementationExtendsTrait(
-  traitImplementationDetails: IImplementationDetails,
-  trait: TAbstractClass,
-): boolean {
-  return TraitExtendsTrait(traitImplementationDetails.forTrait, trait);
-}
 
 export type TWithImplementedTrait<GTarget, GTrait> = GTrait & GTarget;
 
@@ -48,7 +23,7 @@ export function TraitIsImplementedBy<GTrait, GTarget>(
         const iterator: Iterator<IImplementationDetails> = implementedImplementations.values();
         let result: IteratorResult<IImplementationDetails>;
         while (!(result = iterator.next()).done) {
-          if (ImplementationExtendsTrait(result.value, trait)) {
+          if (ImplementationDetailsExtendsTrait(result.value, trait)) {
             return true;
           }
         }

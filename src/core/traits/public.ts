@@ -3,7 +3,6 @@ export { Impl, IsImpl } from './implementation-decorator';
 export {
   TImplementationsCollection,
   ApplyTraitImplementation,
-  AssembleTraitImplementations,
   OverrideTraitImplementations,
 } from './apply-trait-implementation';
 export {
@@ -12,3 +11,7 @@ export {
   TWithImplementedTraits,
   TraitsAreImplementedBy,
 } from './trait-is-implemented-by';
+export {
+  CallTargetTraitMethodOrDefaultImplementation
+} from './call-trait-method';
+export { AssembleTraitImplementations } from './assemble-trait-implementations';
