@@ -4,7 +4,6 @@ import {
   TInferKeyValueTupleUnionGValueFromKey,
 } from '../event-listener-types';
 import { TraitEventListenerOn } from '../trait-event-listener-on/trait-event-listener-on';
-import { EventListenerOnce } from './event-listener-once-function';
 import { TraitEventListenerOnce } from './trait-event-listener-once';
 
 @Trait()
@@ -14,6 +13,10 @@ export abstract class TraitEventListenerOnceUsingOn<GSelf extends TraitEventList
     key: GKey,
     callback: (value: TInferKeyValueTupleUnionGValueFromKey<GKeyValueTupleUnion, GKey>) => void,
   ): TEventListenerOnUnsubscribe {
-    return EventListenerOnce<GKeyValueTupleUnion, GKey>(this, key, callback);
+    const unsubscribe: TEventListenerOnUnsubscribe = this.on<GKey>(key, (value: TInferKeyValueTupleUnionGValueFromKey<GKeyValueTupleUnion, GKey>) => {
+      unsubscribe();
+      callback(value);
+    });
+    return unsubscribe;
   }
 }

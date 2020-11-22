@@ -1,5 +1,5 @@
 import { TGenericFunction } from '../types/function-types';
-import { TAbstractClass, TConstructor } from '../types/class-types';
+import { TAbstractClass, TClassType } from '../types/class-types';
 import { CallFunction } from '../function-helpers/call-function';
 import { TraitIsImplementedBy } from './trait-is-implemented-by';
 
@@ -46,7 +46,7 @@ export function CallTargetTraitMethodOrDefaultImplementation<GTrait, GMethodName
   trait: TAbstractClass<GTrait>,
   methodName: GMethodName,
   args: Parameters<TExtractTraitMethod<GTrait, GMethodName>>,
-  defaultImplementation: TConstructor<GTrait>,
+  defaultImplementation: TClassType<GTrait>,
 ): ReturnType<TExtractTraitMethod<GTrait, GMethodName>> {
   return CallTargetTraitMethodOrDefaultFunction<GTrait, GMethodName>(
     target,

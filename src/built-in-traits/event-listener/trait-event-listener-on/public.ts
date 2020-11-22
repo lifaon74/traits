@@ -1,3 +1,3 @@
-export * from './event-listener-on-with-async-unsubscribe';
+export * from './queue/public';
 export * from './trait-event-listener-on';
 

@@ -289,7 +289,7 @@ declare function CallTargetTraitMethodOrDefaultImplementation<GTrait, GMethodNam
   trait: TAbstractClass<GTrait>,
   methodName: GMethodName,
   args: Parameters<TExtractTraitMethod<GTrait, GMethodName>>,
-  defaultImplementation: TConstructor<GTrait>
+  defaultImplementation: TClassType<GTrait>
 ): ReturnType<TExtractTraitMethod<GTrait, GMethodName>>;
 ```
 

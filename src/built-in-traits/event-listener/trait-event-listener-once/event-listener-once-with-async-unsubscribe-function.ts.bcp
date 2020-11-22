@@ -4,7 +4,7 @@ import {
 import { TraitEventListenerOn } from '../trait-event-listener-on/trait-event-listener-on';
 import {
   EventListenerOnWithAsyncUnsubscribe, TEventListenerOnUnsubscribeAsync
-} from '../trait-event-listener-on/event-listener-on-with-async-unsubscribe';
+} from '../trait-event-listener-on/event-listener-on-with-async-unsubscribe.ts.bcp';
 import { TraitEventListenerIsDispatching } from '../trait-event-listener-is-dispatching/trait-event-listener-is-dispatching';
 
 

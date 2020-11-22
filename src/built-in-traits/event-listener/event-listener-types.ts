@@ -65,4 +65,6 @@ export type TGenericListenerCallback = (value: any) => void;
 
 export type TEventListenerOnUnsubscribe = () => void;
 
+export type TEventListenerOnUnsubscribeQueued = () => Promise<void>;
+
 
