@@ -131,7 +131,11 @@ console.log(numberLike.add({ value: 2 })); // { value: 3 }
 #### AssembleTraitImplementations
 
 ```ts
-declare function AssembleTraitImplementations<GAssembledImplementations extends TConstructor>(traitImplementations: TImplementationsCollection, baseClass?: TConstructor): GAssembledImplementations;
+declare function AssembleTraitImplementations<GAssembledImplementations extends TConstructor>(
+  traitImplementationsForPrototype: TImplementationsCollection,
+  traitImplementationsForStaticClass?: TImplementationsCollection,
+  baseClass?: TConstructor,
+): GAssembledImplementations;
 ```
 
 This function generates a class which groups many Implementations.
