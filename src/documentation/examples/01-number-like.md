@@ -2,9 +2,7 @@
 
 Let me introduce you to this lib through an example: building from scratch a number and some operations on it.
 
-TODO link
-
-[Here is the source file for this example](../../src/examples/number-like.ts)
+[Here is the source file for this example](https://github.com/lifaon74/traits-v2-debug/blob/main/src/number-like/number-like.ts)
 
 ## Trait
 
@@ -265,9 +263,7 @@ console.log(num1.add({ value: 20 })); // NumberLike(21)
 console.log(traitIsImplementedBy(AddTrait, num1)); // true
 ```
 
-TODO link
-
-[source file](../../src/examples/number-like.ts)
+[source file](https://github.com/lifaon74/traits-v2-debug/blob/main/src/number-like/number-like.ts)
 
 ---
 

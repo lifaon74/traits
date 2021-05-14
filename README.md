@@ -15,11 +15,8 @@ A trait comes with an **implementation**, which is the implementation of a trait
 
 - [🤔 fow who ?](src/documentation/for-who.md)
 - [🎯 motivation](src/documentation/motivation.md)
-
-[comment]: <> (- [tutorial &#40;highly recommend&#41;]&#40;src/documentation/examples/01-number-like.md&#41;)
-
-[comment]: <> (- [examples]&#40;src/documentation/examples/README.md&#41;)
-
+- [🎓 tutorial (highly recommended)](src/documentation/examples/01-number-like.md)
+- [🗃️ example repo](https://github.com/lifaon74/traits-v2-debug/tree/main/src/color)
 
 ## 🛠️ Example
 
