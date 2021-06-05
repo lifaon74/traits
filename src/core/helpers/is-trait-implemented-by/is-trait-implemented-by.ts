@@ -11,7 +11,7 @@ export type IWithImplementedTrait<GTarget, GTrait> = GTrait & GTarget;
 /**
  * Returns true if 'trait' is implemented by 'target'
  */
-export function traitIsImplementedBy<GTrait, GTarget>(
+export function isTraitImplementedBy<GTrait, GTarget>(
   trait: IAbstractConstructor<GTrait>,
   target: GTarget,
 ): target is IWithImplementedTrait<GTarget, GTrait> {

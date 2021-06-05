@@ -12,13 +12,6 @@ A Trait has the following constraints:
   and it is not constructable (you cannot perform `new`), so **it must not have any constructor** neither.
 - **it must contain only methods** - the state comes from the object invoking the method, not from the trait itself.
 
-#### Best practices
-
-- for each of your Trait, create a file named `[trait-name].trait.ts` (ex: `add.trait.ts`).
-- a Trait should have only one method. Else consider splitting your Trait.
-- the class name of your Trait should follow this pattern `[TraitName]Trait` (ex: `AddTrait`).
-- a Trait must be as flexible as possible, meaning you should maximize the usage of `generics` (ex: `GSelf`, `GValue`, `GReturn`, ...)
-
 ### Examples
 
 #### A Trait to perform an addition
@@ -31,7 +24,6 @@ export abstract class AddTrait<GSelf, GValue = GSelf, GReturn = GSelf> {
   abstract add(this: GSelf, value: GValue): GReturn;
 }
 ```
-
 
 #### A Trait to perform a subtraction using 'add' and 'negate' 
 

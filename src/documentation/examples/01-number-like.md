@@ -260,7 +260,7 @@ const num3 = new NumberLike(3);
 console.log(num1.add(num2)); // NumberLike(3)
 console.log(num1.add(num2).add(num3)); // NumberLike(6)
 console.log(num1.add({ value: 20 })); // NumberLike(21)
-console.log(traitIsImplementedBy(AddTrait, num1)); // true
+console.log(isTraitImplementedBy(AddTrait, num1)); // true
 ```
 
 [source file](https://github.com/lifaon74/traits-v2-debug/blob/main/src/number-like/number-like.ts)

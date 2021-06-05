@@ -17,6 +17,7 @@ A trait comes with an **implementation**, which is the implementation of a trait
 - [🎯 motivation](src/documentation/motivation.md)
 - [🎓 tutorial (highly recommended)](src/documentation/examples/01-number-like.md)
 - [🗃️ example repo](https://github.com/lifaon74/traits-v2-debug/tree/main/src/color)
+- [🥇 best practices](src/documentation/best-practices.md)
 
 ## 🛠️ Example
 
@@ -107,6 +108,6 @@ or directly using [skypack](https://www.skypack.dev/):
 - [Impl](src/core/implementation/implementation.md)
 - [assembleTraitImplementations](src/core/helpers/assemble-trait-implementations/assemble-trait-implementations.md)
 - [overrideTraitImplementations](src/core/helpers/override-trait-implementations/override-trait-implementations.md)
-- [traitIsImplementedBy](src/core/helpers/trait-is-implemented-by/trait-is-implemented-by.md)
-- [traitsAreImplementedBy](src/core/helpers/traits-are-implemented-by/traits-are-implemented-by.md)
+- [isTraitImplementedBy](src/core/helpers/is-trait-implemented-by/is-trait-implemented-by.md)
+- [areTraitsImplementedBy](src/core/helpers/are-traits-implemented-by/are-traits-implemented-by.md)
 

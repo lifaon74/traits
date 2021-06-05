@@ -1,2 +1,2 @@
-export * from './subtract-using-add-and-negate.trait';
+export * from './subtract.using-add-and-negate.trait';
 

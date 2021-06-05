@@ -1,6 +1,7 @@
+export * from './are-traits-implemented-by/index';
 export * from './assemble-trait-implementations/index';
+export * from './call-target-trait-method-or-default-implementation/index';
+export * from './is-trait-implemented-by/index';
 export * from './override-trait-implementations/index';
-export * from './trait-is-implemented-by/index';
-export * from './traits-are-implemented-by/index';
 
 

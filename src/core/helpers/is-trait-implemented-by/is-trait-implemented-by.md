@@ -1,7 +1,7 @@
-## traitIsImplementedBy
+## isTraitImplementedBy
 
 ```ts
-declare function traitIsImplementedBy<GTrait, GTarget>(
+declare function isTraitImplementedBy<GTrait, GTarget>(
   trait: IAbstractConstructor<GTrait>,
   target: GTarget,
 ): target is IWithImplementedTrait<GTarget, GTrait>;
@@ -20,7 +20,7 @@ Instead, you should prefer to rely purely on Typescript's typing.
 
 ```ts
 const numberLike = new NumberLike(1);
-console.log(traitIsImplementedBy(AddTrait, numberLike)); // returns true if 'numberLike' implements the Trait 'AddTrait'
+console.log(isTraitImplementedBy(AddTrait, numberLike)); // returns true if 'numberLike' implements the Trait 'AddTrait'
 ```
 
 
