@@ -1,6 +1,6 @@
-import { Trait } from '../../../core';
+import { IAddFunction } from './add.function-definition';
 
-@Trait()
-export abstract class AddTrait<GSelf, GValue = GSelf, GReturn = GSelf> {
-  abstract add(this: GSelf, value: GValue): GReturn;
+export interface IAddTrait<GValue, GReturn> {
+  add: IAddFunction<GValue, GReturn>;
 }
+

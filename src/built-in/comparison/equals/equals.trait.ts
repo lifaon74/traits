@@ -1,9 +1,6 @@
-import { Trait } from '../../../core';
+import { IEqualsFunction } from './equals.function-definition';
 
-@Trait()
-export abstract class EqualsTrait<GSelf, GValue = GSelf> {
-  abstract equals(this: GSelf, value: GValue): boolean;
+export interface IEqualsTrait<GValue> {
+  equals: IEqualsFunction<GValue>;
 }
-
-
 

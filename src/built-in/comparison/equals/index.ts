@@ -1,3 +1,2 @@
-export * from './equals.trait';
-export * from './equals.trait.infer';
-
+export * from './equals.function-definition'
+export * from './equals.trait'

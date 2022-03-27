@@ -1,7 +1,6 @@
-import { Trait } from '../../../core';
+import { INegateFunction } from './negate.function-definition';
 
-@Trait()
-export abstract class NegateTrait<GSelf, GReturn = GSelf> {
-  abstract negate(this: GSelf): GReturn;
+export interface INegateTrait<GReturn> {
+  negate: INegateFunction<GReturn>;
 }
 

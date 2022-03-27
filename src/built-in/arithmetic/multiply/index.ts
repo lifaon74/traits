@@ -1,3 +1,2 @@
-export * from './multiply.trait';
-export * from './multiply.trait.infer';
-
+export * from './multiply.function-definition'
+export * from './multiply.trait'

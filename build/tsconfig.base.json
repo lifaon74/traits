@@ -4,7 +4,7 @@
     "allowUnusedLabels": false,
     "alwaysStrict": true,
     "declaration": false,
-    "downlevelIteration": true,
+    "downlevelIteration": false,
     "emitDecoratorMetadata": false,
     "experimentalDecorators": true,
 

@@ -1,6 +1,6 @@
-import { NegateTrait } from './negate.trait';
+import { INegateTrait } from './negate.trait';
 
-export type TInferNegateTraitGReturn<GTrait extends NegateTrait<any, any>> =
-  GTrait extends NegateTrait<any, infer GReturn>
+export type InferNegateTraitGReturn<GFunction extends INegateTrait<any>> =
+  GFunction extends INegateTrait<infer GReturn>
     ? GReturn
     : never;

@@ -1,6 +1,6 @@
 {
   "name": "ts-lib-seed",
-  "version": "1.1.0",
+  "version": "1.1.11",
   "description": "Seed to build a library",
   "main": "index.js",
   "scripts": {
@@ -24,15 +24,24 @@
     "_________________DEV_________________": "",
     "dev:package": "npm-run-all clean:dist dev:package:tcs",
     "dev:package:tcs": "npm-run-all -p dev:package:tcs:module dev:package:tcs:cjs",
-    "dev:package:tcs:module": "tsc-watch -p tsconfig/tsconfig.build.package.module.json --onSuccess \\\"npm run dev:package:tcs:module:onsuccess\\\"",
+    "dev:package:tcs:module": "npm run dev:package:tcs:module:linux",
+    "dev:package:tcs:module:linux": "tsc-watch -p tsconfig/tsconfig.build.package.module.json --onSuccess 'npm run dev:package:tcs:module:onsuccess'",
+    "dev:package:tcs:module:windows": "tsc-watch -p tsconfig/tsconfig.build.package.module.json --onSuccess \\\"npm run dev:package:tcs:module:onsuccess\\\"",
     "dev:package:tcs:module:onsuccess": "npm-run-all build:package:rename:mjs build:package:resolve:mjs assemble:package",
-    "dev:package:tcs:cjs": "tsc-watch -p tsconfig/tsconfig.build.package.cjs.json --onSuccess \\\"npm run dev:package:tcs:cjs:onsuccess\\\"",
+    "dev:package:tcs:cjs": "npm run dev:package:tcs:cjs:linux",
+    "dev:package:tcs:cjs:windows": "tsc-watch -p tsconfig/tsconfig.build.package.cjs.json --onSuccess \\\"npm run dev:package:tcs:cjs:onsuccess\\\"",
+    "dev:package:tcs:cjs:linux": "tsc-watch -p tsconfig/tsconfig.build.package.cjs.json --onSuccess 'npm run dev:package:tcs:cjs:onsuccess'",
     "dev:package:tcs:cjs:onsuccess": "npm-run-all build:package:rename:cjs",
+    "_________________INDEX_FILES_________________": "",
+    "comment:index-files": "node tools/index/comment-index-files.js",
+    "uncomment:index-files": "node tools/index/comment-index-files.js --uncomment",
+    "generate:index-files": "node tools/index/generate-index-files.js",
     "_________________OTHERS_________________": "",
     "clean:dist": "shx rm -rf ./dist",
     "publish:package": "yarn publish ../dist --access public",
     "link:package": "cd ../dist && yarn link",
-    "generate:toc": "markdown-toc ../README.md"
+    "generate:toc": "markdown-toc ../README.md",
+    "comment:build:package": "npm-run-all uncomment:index-files build:package comment:index-files"
   },
   "repository": {
     "type": "git",
@@ -43,16 +52,16 @@
   "license": "MIT",
   "access": "public",
   "devDependencies": {
-    "@types/node": "^15.0.2",
-    "acorn": "^8.2.4",
-    "acorn-walk": "^8.1.0",
-    "escodegen": "^2.0.0",
+    "@types/node": "^17.0.21",
+    "acorn": "^8.7.0",
+    "acorn-walk": "^8.2.0",
+    "astring": "^1.8.1",
     "markdown-toc": "^1.2.0",
     "npm-run-all": "^4.1.5",
     "shx": "^0.3.3",
-    "tsc-watch": "^4.2.9",
-    "tslib": "^2.2.0",
-    "typescript": "4.2.4"
+    "tsc-watch": "^4.6.2",
+    "tslib": "^2.3.1",
+    "typescript": "4.6.2"
   },
   "dependencies": {}
 }

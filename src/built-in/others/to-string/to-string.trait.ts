@@ -1,6 +1,6 @@
-import { Trait } from '../../../core';
+import { IToStringFunction } from './to-string.function-definition';
 
-@Trait()
-export abstract class ToStringTrait<GSelf> {
-  abstract toString(this: GSelf): string;
+export interface IToStringTrait {
+  toString: IToStringFunction;
 }
+

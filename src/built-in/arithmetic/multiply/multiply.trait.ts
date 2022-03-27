@@ -1,7 +1,6 @@
-import { Trait } from '../../../core';
+import { IMultiplyFunction } from './multiply.function-definition';
 
-@Trait()
-export abstract class MultiplyTrait<GSelf, GValue = GSelf, GReturn = GSelf> {
-  abstract multiply(this: GSelf, value: GValue): GReturn;
+export interface IMultiplyTrait<GValue, GReturn> {
+  multiply: IMultiplyFunction<GValue, GReturn>;
 }
 

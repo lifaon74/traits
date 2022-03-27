@@ -4,7 +4,7 @@ const $fs = require('fs').promises;
 const $fsh = require('../../misc/fs-helpers.js');
 const $acorn = require('acorn');
 const $acornWalk = require('acorn-walk');
-const $escodegen = require('escodegen');
+const $astring = require('astring');
 
 const ROOT_PATH = $path.join(__dirname, '../../../../');
 const DIST_PATH = $path.join(ROOT_PATH, 'dist');
@@ -197,6 +197,7 @@ async function resolveMJSFile(jsFilePath) {
           .then((resolvedRequireValue) => {
             // console.log(jsFilePath, ':', requireValue, '->', resolvedRequireValue);
             node.value = resolvedRequireValue;
+            node.raw = JSON.stringify(resolvedRequireValue);
           }),
       );
     };
@@ -229,7 +230,7 @@ async function resolveMJSFile(jsFilePath) {
 
   await Promise.all(promises);
 
-  jsFileContent = $escodegen.generate(tree);
+  jsFileContent = $astring.generate(tree);
 
   await $fs.writeFile(jsFilePath, jsFileContent);
 
@@ -267,6 +268,7 @@ async function resolveCJSFile(jsFilePath) {
           .then((resolvedRequireValue) => {
             // console.log(jsFilePath, ':', requireValue, '->', resolvedRequireValue);
             node.value = resolvedRequireValue;
+            node.raw = JSON.stringify(resolvedRequireValue);
           }),
       );
     };
@@ -293,7 +295,7 @@ async function resolveCJSFile(jsFilePath) {
 
   await Promise.all(promises);
 
-  jsFileContent = $escodegen.generate(tree);
+  jsFileContent = $astring.generate(tree);
 
   // console.log(jsFileContent);
   await $fs.writeFile(jsFilePath, jsFileContent);

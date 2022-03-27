@@ -5,30 +5,34 @@
 
 ## 🏗️ Traits
 
-A **trait** is a set of methods that can used to extend the functionality of a class, and is particularly useful in multi-inheritance.
+A **trait** is simply a set of named functions (called methods) grouped into an object.
 
-A trait doesn't have any internal state, it only provides some typed and constrained methods,
-and relies on the provided `this` to carry the data. It's some kind of *framework* for classes, or abstract classes with super-powers.
+They are mostly used for complex inheritance (like multi-inheritance, polymorphism) and with objects sharing their methods.
 
-A trait comes with an **implementation**, which is the implementation of a trait for a specific data structure.
-
+It's some kind of *framework* for objects and methods.
 
 - [🤔 fow who ?](src/documentation/for-who.md)
 - [🎯 motivation](src/documentation/motivation.md)
 - [🎓 tutorial (highly recommended)](src/documentation/examples/01-number-like.md)
 - [🗃️ example repo](https://github.com/lifaon74/traits-v2-debug/tree/main/src/color)
-- [🥇 best practices](src/documentation/best-practices.md)
 
 ## 🛠️ Example
 
 ```ts
 // add.trait.ts
 
-@Trait()
-export abstract class AddTrait<GSelf, GValue = GSelf, GReturn = GSelf> {
-  abstract add(this: GSelf, value: GValue): GReturn;
+export interface IAddFunction<GValue, GReturn> {
+  (
+    value: GValue,
+  ): GReturn;
+}
+
+export interface IAddTrait<GValue, GReturn> {
+  add: IAddFunction<GValue, GReturn>;
 }
 ```
+
+[//]: # (TODO)
 
 <details>
   <summary>Click to expand</summary>

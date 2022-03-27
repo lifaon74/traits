@@ -1,17 +1,18 @@
 ## 🎯 Motivation
 
-Javascript is a really flexible language:
-classes inheritance works with prototypes which allows us to do practically everything in OO,
-but working directly with the `prototype` is usually hazardous, hard to read and understand, very verbose,
-and is not an easy task when you want to create a proper class (at least for new js developers).
+Javascript is a really flexible language: it uses `prototype` for inheritance giving us a very powerful tool to build complex objects and classes.
 
-There came ES6, which introduced classes and helped a lot to manage the constructor, properties, methods and inheritance.
-It's a far better, easier, and more legible way to work that the previous `prototype` approach.
+However, it suffers from 2 importants issues:
 
-Sadly ES6 classes doesn't permit multi inheritance, nor sharing identical methods accros many classes.
+- working directly with the `prototype` is usually hazardous, hard to read and understand, very verbose,
+  and not an easy task. To simplify all of this, classes were introduced with ES6. 
+  It's a far better, easier, and more legible way to work that the previous `prototype` approach. But:
+- ES6 classes doesn't permit multi inheritance, nor sharing identical methods accros many classes.
 
-In some cases (mostly when you build a library for other developers), multi inheritance is required.
-For this, two common workaround exist:
+So we have now, an elegant but limited solution.
+
+In some cases (mostly when you build a library for other developers), multi inheritance is a must.
+For this, two common workarounds exist:
 
 - `Mixins` are classes with some internal state, constructor, etc... => and you copy their properties on your child classes
   - limits:
@@ -24,29 +25,11 @@ For this, two common workaround exist:
   - but... every other problems remain (conflict on properties, instanceof, etc...)
 
 
-I explored intensely both of these solutions, writing many libraries using these patterns, but each time, I faced their limits and was not totally satisfied.
+I explored intensely both of these solutions, writing or using many libraries using these patterns.
+But, each time, I faced their limits and was not totally satisfied.
 
-In my mind, I wanted something able to share methods across multiple classes, avoiding code duplication,
-and the possibility to implement only the methods I needed, reducing drastically the final build
-(ex: if someone doesn't use the method `doSomething()`, then it should not be part of the class, meaning not in the final script)
-=> building myself my classes based on bricks (here: methods).
+In my mind, I wanted something like legos: build my classes bricks by bricks (here their methods).
+It would give me the possibility to re-use existing methods, perform multi-inheritance on my classes,
+and implement only what is required (which induces a smaller build)
 
----
-
-Other languages like *rust*, *php*, or many others have found a solution to this: `Traits`
-
-I'll speak more about [rust traits](https://doc.rust-lang.org/book/ch10-02-traits.html) because I find their approach very elegant:
-
-- on one side, you have the data: a structure with properties which contains some data and nothing else
-- on the other side, you have the traits: a collection of methods. It may be specialized for a specific structure of data, or kept generic.
-
-Then, you tell the program that your data structure implements `traitA`, `traitB`, etc...
-and when you write `data.someMethod().anotherMethod()` it somehow does `anotherMethod(someMethod(data))`.
-It's important to note that *the data doesn't carry the methods* (as opposed to javascript, where class instances have methods from the prototype chain),
-instead the functions are resolved by the types.
-
-
-At the end, it's very different of our traditional OO approach with classes, inheritance, etc... but it's actually very cleaver.
-
-I wanted to have the same possibilities on javascript, so I wrote an equivalent in Typescript (works too in javascript, but typing is pretty important for Traits).
-
+**...so I wrote this library**

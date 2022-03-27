@@ -1,3 +1,2 @@
-export * from './add.trait';
-export * from './add.trait.infer';
-
+export * from './add.function-definition'
+export * from './add.trait'
