@@ -1,2 +1,2 @@
-export * from './add.function-definition'
-export * from './add.trait'
+export * from './add.function-definition';
+export * from './add.trait';

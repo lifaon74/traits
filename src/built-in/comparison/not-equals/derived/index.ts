@@ -1,1 +1,1 @@
-export * from './not-equals-function.create.using-equals'
+export * from './not-equals-function.create.using-equals';

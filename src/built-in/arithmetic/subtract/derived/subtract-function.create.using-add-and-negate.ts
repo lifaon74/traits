@@ -1,7 +1,7 @@
-import { ISubtractFunction } from '../subtract.function-definition';
+import { IAddTrait } from '../../add/add.trait';
 import { INegateTrait } from '../../negate/negate.trait';
 import { InferNegateTraitGReturn } from '../../negate/negate.trait.infer';
-import { IAddTrait } from '../../add/add.trait';
+import { ISubtractFunction } from '../subtract.function-definition';
 
 export type ICreateSubtractFunctionUsing$Add$And$Negate$GValueConstraint = INegateTrait<any>;
 
@@ -14,7 +14,6 @@ export interface ICreateSubtractFunctionUsing$Add$And$Negate$Options< // generic
 //
 {
 }
-
 
 export function createSubtractFunctionUsing$Add$And$Negate$< // generics
   GValue extends ICreateSubtractFunctionUsing$Add$And$Negate$GValueConstraint,

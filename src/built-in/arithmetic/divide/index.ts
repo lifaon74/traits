@@ -1,2 +1,2 @@
-export * from './divide.function-definition'
-export * from './divide.trait'
+export * from './divide.function-definition';
+export * from './divide.trait';

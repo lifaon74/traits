@@ -1,11 +1,8 @@
-export interface IInstanceOfFunction<GInstanceOf> {
-  (
-    value: unknown,
-  ): value is GInstanceOf;
-}
+import { IGenericInstanceConstructor } from './types/instance-constructor.type';
+import { IIsInstanceOf } from './types/is-instance-of.type';
 
-// export interface IInstanceOfFunction<GInstanceOf> {
-//   (
-//     value: unknown,
-//   ): value is GInstanceOf;
-// }
+export interface IInstanceOfFunction<GInstance> {
+  <GInstanceConstructor extends IGenericInstanceConstructor>(
+    ctor: GInstanceConstructor,
+  ): IIsInstanceOf<GInstance, GInstanceConstructor>;
+}
