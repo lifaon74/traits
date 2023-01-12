@@ -2,6 +2,7 @@
 logs
 *.log
 
+
 # Runtime data
 pids
 *.pid
@@ -9,13 +10,14 @@ pids
 
 node_modules/
 dist/
+.cache/
 
 # Users Environment Variables
 .lock-wscript
 .tsdrc
 .typingsrc
 
-#IDE configuration files
+# IDE configuration files
 .idea
 .vscode
 *.iml
@@ -24,12 +26,25 @@ dist/
 # OS X trash files
 .DS_Store
 
-#eclipse ide
+# eclipse ide
 .project
 .settings
 .classpath
 /node/
 /target/
 
+# Package manager
 .npmrc
+
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Swap the comments on the following lines if you don't wish to use zero-installs
+# Documentation here: https://yarnpkg.com/features/zero-installs
+!.yarn/cache
+#.pnp.*
 

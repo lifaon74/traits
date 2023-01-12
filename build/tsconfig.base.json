@@ -30,12 +30,8 @@
     "target": "es5",
     "outDir": "../dist",
     "lib": [
-      "esnext",
-      "es2019",
-      "dom"
-    ],
-    "typeRoots": [
-      "./node_modules/@types"
+      "ESNext",
+      "DOM"
     ]
   },
   "formatCodeOptions": {

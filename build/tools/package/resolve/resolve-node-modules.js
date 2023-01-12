@@ -1,12 +1,17 @@
 const $util = require('util');
 const $path = require('path');
-const $fs = require('fs').promises;
+const $fs = require('fs/promises');
 const $fsh = require('../../misc/fs-helpers.js');
 const $acorn = require('acorn');
 const $acornWalk = require('acorn-walk');
 const $astring = require('astring');
+const $crypto = require('crypto');
+const { minifyHTML } = require('./minify-html');
+const { minifyCSS } = require('./minify-css');
+const { compileSASS } = require('./compile-sass');
 
 const ROOT_PATH = $path.join(__dirname, '../../../../');
+const SRC_PATH = $path.join(ROOT_PATH, 'src');
 const DIST_PATH = $path.join(ROOT_PATH, 'dist');
 const MJS_CACHE_PATH = $path.join(DIST_PATH, '.mjs-cache');
 const CJS_CACHE_PATH = $path.join(DIST_PATH, '.cjs-cache');
@@ -50,10 +55,118 @@ function isFileRelative(
   return isFile($path.join($path.dirname(sourcePath), path));
 }
 
+
+function createRawFileESM(
+  path,
+  content,
+) {
+  return $fs.writeFile(path, `export default ${JSON.stringify(content)};`);
+}
+
+function createRawFileCJS(
+  path,
+  content,
+) {
+  return $fs.writeFile(path, `module.exports = ${JSON.stringify(content)};`);
+}
+
+
+function createRawFileModule(
+  path,
+  content,
+  mode,
+) {
+  switch (mode) {
+    case 'mjs':
+     return createRawFileESM(path, content);
+    case 'cjs':
+      return createRawFileCJS(path, content);
+    default:
+      throw new Error(`Invalid module mode`);
+  }
+}
+
+
+function createHashedRawFileModule(
+  path,
+  content,
+  mode,
+) {
+  const id = $crypto.createHash('sha256').update(content).digest('hex');
+  const name = `${id}.${mode}`;
+  const newPath = $path.join($path.dirname(path), name);
+  return createRawFileModule(newPath, content, mode)
+    .then(() => newPath);
+}
+
+function findOriginalFilePath(
+  path,
+  mode,
+) {
+  const modePath = (() => {
+    switch (mode) {
+      case 'mjs':
+        return 'src';
+      case 'cjs':
+        return 'cjs/src';
+      default:
+        throw new Error(`Invalid module mode`);
+    }
+  })();
+
+  const relativeToDistPath = $path.relative($path.join($path.resolve(DIST_PATH), modePath), $path.resolve(path));
+
+  return $path.join(SRC_PATH, relativeToDistPath);
+}
+
+async function isSpecialRequireValue(
+  sourcePath,
+  path,
+  mode,
+) {
+  const parentPath = $path.dirname(sourcePath);
+  const _path = $path.join(parentPath, path);
+  const url = new URL(_path, 'https://test.com');
+
+  const pathname = url.pathname;
+  const extension = $path.extname(url.pathname);
+
+  const raw = url.searchParams.has('raw');
+  const inline = url.searchParams.has('inline');
+
+
+  if (extension === '.html') {
+    const srcPath = findOriginalFilePath(pathname, mode);
+    const content = await minifyHTML(await $fs.readFile(srcPath, { encoding: 'utf8' }));
+    const newPath = await createHashedRawFileModule(pathname, content, mode);
+    console.log(`optimizing html: ${srcPath}`);
+    return './' + $path.relative(parentPath, newPath);
+  } else if (extension === '.css') {
+    const srcPath = findOriginalFilePath(pathname, mode);
+    const content = await minifyCSS(await $fs.readFile(srcPath, { encoding: 'utf8' }), srcPath);
+    const newPath = await createHashedRawFileModule(pathname, content, mode);
+    console.log(`optimizing css: ${srcPath}`);
+    return './' + $path.relative(parentPath, newPath);
+  } else if (extension === '.scss') {
+    const srcPath = findOriginalFilePath(pathname, mode);
+    const content = await compileSASS(srcPath);
+    const newPath = await createHashedRawFileModule(pathname, content, mode);
+    console.log(`optimizing scss: ${srcPath}`);
+    return './' + $path.relative(parentPath, newPath);
+  } else {
+    return null;
+  }
+}
+
 async function resolveRequireAsFile(
   sourcePath,
   value,
+  mode,
 ) {
+  let _value;
+  if ((_value = await isSpecialRequireValue(sourcePath, value, mode)) !== null) {
+    return _value;
+  }
   if (await isFileRelative(sourcePath, value)) {
     return value;
   }
@@ -121,8 +234,9 @@ async function resolveRequireAsDirectory(
 async function resolveRelativeRequire(
   sourcePath,
   value,
+  mode,
 ) {
-  const asFile = await resolveRequireAsFile(sourcePath, value);
+  const asFile = await resolveRequireAsFile(sourcePath, value, mode);
   if (asFile !== null) {
     return asFile;
   }
@@ -143,9 +257,10 @@ async function resolveRelativeRequire(
 function resolveRequire(
   sourcePath,
   value,
+  mode,
 ) {
   return isRelativeRequire(value)
-    ? resolveRelativeRequire(sourcePath, value)
+    ? resolveRelativeRequire(sourcePath, value, mode)
     : Promise.resolve(value);
 }
 
@@ -193,7 +308,7 @@ async function resolveMJSFile(jsFilePath) {
     const resolve = (node) => {
       const requireValue = node.value;
       promises.push(
-        resolveRequire(jsFilePath, requireValue)
+        resolveRequire(jsFilePath, requireValue, 'mjs')
           .then((resolvedRequireValue) => {
             // console.log(jsFilePath, ':', requireValue, '->', resolvedRequireValue);
             node.value = resolvedRequireValue;
@@ -264,7 +379,7 @@ async function resolveCJSFile(jsFilePath) {
     const resolve = (node) => {
       const requireValue = node.value;
       promises.push(
-        resolveRequire(jsFilePath, requireValue)
+        resolveRequire(jsFilePath, requireValue, 'cjs')
           .then((resolvedRequireValue) => {
             // console.log(jsFilePath, ':', requireValue, '->', resolvedRequireValue);
             node.value = resolvedRequireValue;
