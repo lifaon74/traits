@@ -1,109 +1,58 @@
 ## NewTrait
 
 ```ts
-@Trait()
-export abstract class NewTrait<GSelf, GArguments extends any[], GReturn> {
-  abstract [NEW](this: GSelf, ...args: GArguments): GReturn;
+interface INewFunction<GArguments extends any[], GReturn> {
+  (
+    ...args: GArguments
+  ): GReturn;
+}
+
+interface INewTrait<GArguments extends any[], GReturn> {
+  [NEW]: INewFunction<GArguments, GReturn>;
 }
 ```
 
-`NewTrait` is used when another Trait requires to create a new instance of our `GSelf`.
+`NewTrait` is used when we need to create a new instance of the original implementation.
 
-### Example: grayscale function for Color
+### Example: 'add' function for a Number
 
-#### Extend NewTrait for a Color class
-
-```ts
-// color-new.trait.ts
-
-export type IColorNewArguments = [
-  r: number,
-  g: number,
-  b: number,
-  a: number,
-];
-
-@Trait()
-export abstract class ColorNewTrait<GSelf, GReturn> extends NewTrait<GSelf, IColorNewArguments, GReturn> {
-}
-```
-
-#### Implement NewTrait for our Color class
+#### Define the Number type
 
 ```ts
-// color-class-new.implementation.ts
+// number.type.ts
 
-@Impl()
-export class ColorClassNewImplementation<GSelf> extends ColorNewTrait<GSelf, IColor> {
-  [NEW](this: GSelf, r: number, g: number, b: number, a: number): IColor {
-    return new Color(r, g, b, a);
-  }
-}
-```
-
-#### Create a ColorGrayscaleTrait
-
-```ts
-// color-grayscale.trait.ts
-
-@Trait()
-export abstract class ColorGrayscaleTrait<GSelf, GReturn> {
-  abstract grayscale(this: GSelf): GReturn;
-}
-```
-
-
-#### Create a ColorGrayscaleUsingGetChannelsAndNewTrait that extends ColorGrayscaleTrait and uses ColorNewTrait
-
-```ts
-// color-grayscale-using-get-channels-and-new.trait.ts
-
-export interface IColorGrayscaleUsingGetChannelsAndNewTraitGSelfConstraint<GReturn> extends
-  // traits
-  IColorGetChannelsTraits<any>, // traits to get the rgba channels
-  ColorNewTrait<any, GReturn>
+export interface INumber extends //
+  INewFunction<[number], INumber>,
+  IValueOfTrait<number>,
+  IAddTrait<IValueOfTrait<number>, INumber>
   //
 {
 }
-
-@Trait()
-export abstract class ColorGrayscaleUsingGetChannelsAndNewTrait< // generics
-  GSelf extends IColorGrayscaleUsingGetChannelsAndNewTraitGSelfConstraint<GReturn>,
-  GReturn
-  //
-  > extends ColorGrayscaleTrait<GSelf, GReturn> {
-  grayscale(this: GSelf): GReturn {
-    const c: number = (this.getRed() + this.getGreen() + this.getBlue()) / 3;
-    return this[NEW](c, c, c, this.getAlpha());
-  }
-}
 ```
 
-#### Implement ColorGrayscaleUsingGetChannelsAndNewTrait for our Color class
+#### Write a function to build a Number
 
 ```ts
-// color-struct-grayscale.implementation.ts
+// create-number.ts
 
-export interface IColorStructGrayscaleImplementationGSelfConstraint<GReturn> extends
-  // struct
-  IGenericColorStruct,
-  // constraint
-  IColorGrayscaleUsingGetChannelsAndNewTraitGSelfConstraint<GReturn>
-  //
-{
+export function createNumber(
+  value: number,
+): INumber {
+  const _new = createNumber;
+
+  const valueOf = (): number => {
+    return value;
+  };
+
+  const add = (_value: IValueOfTrait<number>): INumber => {
+    return _new(value + _value.valueOf());
+  };
+  
+  return {
+    [NEW]: _new,
+    valueOf,
+    add,
+  };
 }
-
-
-@Impl()
-export class ColorStructGrayscaleImplementation< // generics
-  GSelf extends IColorStructGrayscaleImplementationGSelfConstraint<GReturn>,
-  GReturn
-  //
-  > extends ColorGrayscaleUsingGetChannelsAndNewTrait<GSelf, GReturn> {
-}
-
-
 ```
-
-
 

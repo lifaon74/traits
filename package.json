@@ -1,6 +1,6 @@
 {
   "name": "@lifaon/traits",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "Traits for javascript: mix your classes with ease",
   "repository": {
     "type": "git",
@@ -21,8 +21,5 @@
   "author": "Valentin Richard",
   "license": "MIT",
   "access": "public",
-  "dependencies": {},
-  "devDependencies": {
-    "tslib": "^2.2.0"
-  }
+  "dependencies": {}
 }

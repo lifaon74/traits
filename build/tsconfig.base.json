@@ -4,7 +4,7 @@
     "allowUnusedLabels": false,
     "alwaysStrict": true,
     "declaration": false,
-    "downlevelIteration": true,
+    "downlevelIteration": false,
     "emitDecoratorMetadata": false,
     "experimentalDecorators": true,
 
@@ -30,12 +30,8 @@
     "target": "es5",
     "outDir": "../dist",
     "lib": [
-      "esnext",
-      "es2019",
-      "dom"
-    ],
-    "typeRoots": [
-      "./node_modules/@types"
+      "ESNext",
+      "DOM"
     ]
   },
   "formatCodeOptions": {

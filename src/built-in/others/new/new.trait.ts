@@ -1,7 +1,6 @@
-import { Trait } from '../../../core';
+import { INewFunction } from './new.function-definition';
 import { NEW } from './new.symbol.constant';
 
-@Trait()
-export abstract class NewTrait<GSelf, GArguments extends any[], GReturn> {
-  abstract [NEW](this: GSelf, ...args: GArguments): GReturn;
+export interface INewTrait<GArguments extends any[], GReturn> {
+  [NEW]: INewFunction<GArguments, GReturn>;
 }

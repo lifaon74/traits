@@ -1,6 +1,6 @@
-import { Trait } from '../../../core';
+import { ISubtractFunction } from './subtract.function-definition';
 
-@Trait()
-export abstract class SubtractTrait<GSelf, GValue = GSelf, GReturn = GSelf> {
-  abstract subtract(this: GSelf, value: GValue): GReturn;
+export interface ISubtractTrait<GValue, GReturn> {
+  subtract: ISubtractFunction<GValue, GReturn>;
 }
+

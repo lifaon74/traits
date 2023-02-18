@@ -1,5 +1,2 @@
-export * from './class/index';
-export * from './function/index';
-export * from './is-type/index';
-export * from './object/index';
-
+export * from './implements';
+export * from './types/index';

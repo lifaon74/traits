@@ -1,9 +1,9 @@
-const $fs = require('fs').promises;
+const $fs = require('fs/promises');
 const $path = require('path');
 
 function exploreDirectory(path, callback) {
-  // return exploreDirectoryConcurrent(path, callback);
-  return exploreDirectorySequential(path, callback);
+  return exploreDirectoryConcurrent(path, callback);
+  // return exploreDirectorySequential(path, callback);
 }
 
 function exploreDirectorySequential(path, callback) {

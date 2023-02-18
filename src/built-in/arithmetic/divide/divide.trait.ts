@@ -1,6 +1,6 @@
-import { Trait } from '../../../core';
+import { IDivideFunction } from './divide.function-definition';
 
-@Trait()
-export abstract class DivideTrait<GSelf, GValue = GSelf, GReturn = GSelf> {
-  abstract divide(this: GSelf, value: GValue): GReturn;
+export interface IDivideTrait<GValue, GReturn> {
+  divide: IDivideFunction<GValue, GReturn>;
 }
+
