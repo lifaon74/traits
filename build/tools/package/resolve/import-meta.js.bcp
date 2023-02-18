@@ -1,0 +1,200 @@
+const ts = require('typescript');
+
+// https://github.com/Jack-Works/commonjs-import.meta/blob/master/index.ts
+
+module.exports = function() {
+  return (ctx) => {
+    return (sourceFile) => {
+      // console.log('---------->transform');
+      // console.log(sourceFile);
+      // if (ctx.getCompilerOptions().module === ts.ModuleKind.CommonJS) {
+        if (sourceFile.fileName.endsWith('mat-icons-search.component.ts')) {
+          // console.log(ts.factory.createFileLevelUniqueName);
+          // console.log(ts.factory);
+
+          // const {parent, ...statement} = sourceFile.statements[0];
+          // console.log(statement);
+
+          const __node = ts.factory.createIdentifier('href');
+          // const [meta, dec] = createImportMeta();
+          // console.log(meta, dec);
+
+          function visitor(node) {
+            if (isImportMeta(node)) {
+              console.log('FOUNNNNNNNND meta');
+              // return meta;
+              return __node;
+            } else {
+              return ts.visitEachChild(node, visitor, ctx);
+            }
+          }
+
+          function visitor2(node) {
+            delete node.original;
+            delete node.symbol;
+            return ts.visitEachChild(node, visitor, ctx);
+          }
+
+          const newSourceFile = ts.visitEachChild(sourceFile, visitor, ctx);
+          ts.visitEachChild(sourceFile, visitor2, ctx);
+
+          sourceFile.text = 'console.log(href.url)';
+          sourceFile.identifiers.delete('meta');
+          // console.log(sourceFile);
+
+        // export interface TextSpan {
+        //     start: number;
+        //     length: number;
+        //   }
+        // export interface TextChangeRange {
+        //     span: TextSpan;
+        //     newLength: number;
+        //   }
+
+          delete sourceFile.original;
+          delete sourceFile.symbol;
+          delete sourceFile.externalModuleIndicator;
+          delete sourceFile.parent;
+          delete sourceFile.endOfFileToken;
+          delete sourceFile.endFlowNode;
+          // newSourceFile.update(newSourceFile.text, {
+          //   span: {
+          //     start: 0,
+          //     length: 10,
+          //   },
+          //   newLength: 10,
+          // });
+
+          const { parent, ...details } = sourceFile.statements[0].expression.arguments[0];
+          // console.log(details);
+
+          sourceFile.statements = [
+            __node,
+          ];
+
+          // for (const key in sourceFile) {
+          //   delete sourceFile[key];
+          // }
+          //
+          // for (const key in newSourceFile) {
+          //   sourceFile[key] = newSourceFile[key];
+          // }
+
+
+          sourceFile = ts.factory.updateSourceFile(
+            sourceFile,
+            // ([dec/*, nullPrototype(meta)*/]).concat(sourceFile.statements),
+            [
+              ...newSourceFile.statements,
+            ],
+            sourceFile.isDeclarationFile,
+            sourceFile.referencedFiles,
+            sourceFile.typeReferenceDirectives,
+            sourceFile.hasNoDefaultLib,
+            sourceFile.libReferenceDirectives,
+          );
+
+          console.log(sourceFile);
+
+
+          return sourceFile;
+
+          // sourceFile = ts.factory.updateSourceFile(
+          //   newSourceFile,
+          //   // ([dec/*, nullPrototype(meta)*/]).concat(sourceFile.statements),
+          //   [
+          //     ...newSourceFile.statements,
+          //   ],
+          //   newSourceFile.isDeclarationFile,
+          //   newSourceFile.referencedFiles,
+          //   newSourceFile.typeReferenceDirectives,
+          //   newSourceFile.hasNoDefaultLib,
+          //   newSourceFile.libReferenceDirectives,
+          // );
+
+          // sourceFile = ts.visitEachChild(sourceFile, visitor, ctx);
+          // // sourceFile = ts.updateSourceFileNode(
+          // //   sourceFile,
+          // //   ([dec, nullPrototype(meta)]).concat(sourceFile.statements),
+          // //   sourceFile.isDeclarationFile,
+          // //   sourceFile.referencedFiles,
+          // //   sourceFile.typeReferenceDirectives,
+          // //   sourceFile.hasNoDefaultLib,
+          // //   sourceFile.libReferenceDirectives,
+          // // );
+          // //   updateSourceFile(node: SourceFile, statements: readonly Statement[], isDeclarationFile?: boolean, referencedFiles?: readonly FileReference[], typeReferences?: readonly FileReference[], hasNoDefaultLib?: boolean, libReferences?: readonly FileReference[]): SourceFile;
+          //
+          // const { parent, ...statement } = sourceFile.statements[0];
+          // console.log(statement);
+          //
+          // // sourceFile = ts.factory.updateSourceFile(
+          // //   sourceFile,
+          // //   // ([dec/*, nullPrototype(meta)*/]).concat(sourceFile.statements),
+          // //   [
+          // //     ...sourceFile.statements,
+          // //   ],
+          // //   sourceFile.isDeclarationFile,
+          // //   sourceFile.referencedFiles,
+          // //   sourceFile.typeReferenceDirectives,
+          // //   sourceFile.hasNoDefaultLib,
+          // //   sourceFile.libReferenceDirectives,
+          // // );
+          //
+          // //  createSourceFile(statements: readonly Statement[], endOfFileToken: EndOfFileToken, flags: NodeFlags): SourceFile;
+          // // sourceFile = ts.factory.createSourceFile(
+          // //   [
+          // //     ...sourceFile.statements,
+          // //   ],
+          // //   sourceFile.isDeclarationFile,
+          // //   sourceFile.referencedFiles,
+          // //   sourceFile.typeReferenceDirectives,
+          // //   sourceFile.hasNoDefaultLib,
+          // //   sourceFile.libReferenceDirectives,
+          // // );
+        }
+      // }
+      return sourceFile;
+    };
+  };
+};
+
+// const __meta = { url: require('url').pathToFileURL(__filename).href }
+
+function createImportMeta() {
+  // const identifier = ts.createFileLevelUniqueName('__meta');
+  const identifier = ts.factory.createUniqueName('__meta', ts.GeneratedIdentifierFlags.Optimistic);
+  const urlModule = ts.factory.createCallExpression(ts.factory.createIdentifier('require'), undefined, [ts.factory.createStringLiteral('url')]);
+  const pathToFileURL = ts.factory.createPropertyAccessExpression(urlModule, ts.factory.createIdentifier('pathToFileURL'));
+  const normalizedFileName = ts.factory.createPropertyAccessExpression(
+    ts.factory.createCallExpression(pathToFileURL, undefined, [ts.factory.createIdentifier('__filename')]),
+    ts.factory.createIdentifier('href'),
+  );
+  const metaObjectLiteral = ts.factory.createObjectLiteralExpression(
+    [ts.factory.createPropertyAssignment(ts.factory.createIdentifier('url'), normalizedFileName)],
+    false,
+  );
+  const importMeta = ts.factory.createVariableStatement(
+    undefined,
+    ts.factory.createVariableDeclarationList(
+      [ts.factory.createVariableDeclaration(identifier, undefined, metaObjectLiteral)],
+      ts.NodeFlags.Const,
+    ),
+  );
+  return [identifier, importMeta];
+}
+
+function nullPrototype(node) {
+  return ts.createExpressionStatement(
+    ts.factory.createCallExpression(
+      ts.createPropertyAccess(ts.factory.createIdentifier('Object'), ts.factory.createIdentifier('setPrototypeOf')),
+      undefined,
+      [node, ts.factory.createNull()],
+    ),
+  );
+}
+
+function isImportMeta(node) {
+  return ts.isMetaProperty(node)
+    && node.keywordToken === ts.SyntaxKind.ImportKeyword
+    && node.name.text === 'meta';
+}

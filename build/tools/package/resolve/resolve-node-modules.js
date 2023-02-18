@@ -20,6 +20,13 @@ function logObject(obj) {
   console.log($util.inspect(obj, false, null, true /* enable colors */));
 }
 
+function setLiteralValue(
+  node,
+  value,
+) {
+  node.value = value;
+  node.raw = JSON.stringify(value);
+}
 
 function isRelativeRequire(value) {
   // return importPath.startsWith('.')
@@ -78,7 +85,7 @@ function createRawFileModule(
 ) {
   switch (mode) {
     case 'mjs':
-     return createRawFileESM(path, content);
+      return createRawFileESM(path, content);
     case 'cjs':
       return createRawFileCJS(path, content);
     default:
@@ -117,6 +124,31 @@ function findOriginalFilePath(
   const relativeToDistPath = $path.relative($path.join($path.resolve(DIST_PATH), modePath), $path.resolve(path));
 
   return $path.join(SRC_PATH, relativeToDistPath);
+}
+
+function isImportMetaURLNode(
+  node,
+) {
+  return (node.type === 'MemberExpression')
+    && (node.object.type === 'MetaProperty')
+    && (node.object.meta.type === 'Identifier')
+    && (node.object.meta.name === 'import')
+    && (node.object.property.type === 'Identifier')
+    && (node.object.property.name === 'meta')
+    && (node.property.type === 'Identifier')
+    && (node.property.name === 'url')
+    ;
+}
+
+function isCJSImportMetaURLNode(
+  node,
+) {
+  return (node.type === 'MemberExpression')
+    && (node.object.type === 'Identifier')
+    && (node.object.name === '__meta__')
+    && (node.property.type === 'Identifier')
+    && (node.property.name === 'url')
+    ;
 }
 
 async function isSpecialRequireValue(
@@ -170,19 +202,19 @@ async function resolveRequireAsFile(
   if (await isFileRelative(sourcePath, value)) {
     return value;
   }
-  const withJSExt = `${ value }.js`;
+  const withJSExt = `${value}.js`;
   if (await isFileRelative(sourcePath, withJSExt)) {
     return withJSExt;
   }
-  const withMJSExt = `${ value }.mjs`;
+  const withMJSExt = `${value}.mjs`;
   if (await isFileRelative(sourcePath, withMJSExt)) {
     return withMJSExt;
   }
-  const withCJSExt = `${ value }.cjs`;
+  const withCJSExt = `${value}.cjs`;
   if (await isFileRelative(sourcePath, withCJSExt)) {
     return withCJSExt;
   }
-  const withJSONExt = `${ value }.json`;
+  const withJSONExt = `${value}.json`;
   if (await isFileRelative(sourcePath, withJSONExt)) {
     return withJSONExt;
   }
@@ -193,19 +225,19 @@ async function resolveRequireLoadIndex(
   sourcePath,
   value,
 ) {
-  const withJSExt = `${ value }/index.js`;
+  const withJSExt = `${value}/index.js`;
   if (await isFileRelative(sourcePath, withJSExt)) {
     return withJSExt;
   }
-  const withMJSExt = `${ value }/index.mjs`;
+  const withMJSExt = `${value}/index.mjs`;
   if (await isFileRelative(sourcePath, withMJSExt)) {
     return withMJSExt;
   }
-  const withCJSExt = `${ value }/index.cjs`;
+  const withCJSExt = `${value}/index.cjs`;
   if (await isFileRelative(sourcePath, withCJSExt)) {
     return withCJSExt;
   }
-  const withJSONExt = `${ value }/index.json`;
+  const withJSONExt = `${value}/index.json`;
   if (await isFileRelative(sourcePath, withJSONExt)) {
     return withJSONExt;
   }
@@ -217,7 +249,7 @@ async function resolveRequireAsDirectory(
   sourcePath,
   value,
 ) {
-  const packageJSON = `${ value }/package.json`;
+  const packageJSON = `${value}/package.json`;
   if (await isFileRelative(sourcePath, packageJSON)) {
     throw new Error(`TODO: support package.json`);
   }
@@ -250,7 +282,7 @@ async function resolveRelativeRequire(
   // TODO LOAD_PACKAGE_IMPORTS
   // TODO LOAD_PACKAGE_SELF
 
-  throw new Error(`Not found:  ${ value }`);
+  throw new Error(`Not found:  ${value}`);
 }
 
 
@@ -290,6 +322,7 @@ async function resolveMJSFile(jsFilePath) {
   // if (!jsFilePath.includes('hello-world-named')) {
   // if (!jsFilePath.includes('hello-world-import')) {
   // if (!jsFilePath.includes('hello-world-import-all')) {
+  // if (!jsFilePath.includes('mat-icons-search.component')) {
   //   return;
   // }
 
@@ -311,10 +344,50 @@ async function resolveMJSFile(jsFilePath) {
         resolveRequire(jsFilePath, requireValue, 'mjs')
           .then((resolvedRequireValue) => {
             // console.log(jsFilePath, ':', requireValue, '->', resolvedRequireValue);
-            node.value = resolvedRequireValue;
-            node.raw = JSON.stringify(resolvedRequireValue);
+            setLiteralValue(node, resolvedRequireValue);
           }),
       );
+    };
+
+    // const resolveTemplateLiteral = (node) => {
+    //   const last = node.quasis[node.quasis.length - 1].value;
+    //   const lastPartValue = `${last.cooked}.mjs`;
+    //   last.raw = lastPartValue;
+    //   last.cooked = lastPartValue;
+    // };
+
+    // new URL('path', import.meta.url)
+    const resolveURLImportMeta = (
+      node,
+    ) => {
+      if (
+        (node.type === 'NewExpression')
+        && (node.callee.type === 'Identifier')
+        && (node.callee.name === 'URL')
+        && (node.arguments.length === 2)
+        && isImportMetaURLNode(node.arguments[1])
+      ) {
+        const firstArg = node.arguments[0];
+
+        if (
+          (firstArg.type === 'Literal')
+          && (typeof firstArg.value === 'string')
+        ) {
+          setLiteralValue(firstArg, `${firstArg.value}.mjs`);
+        } else if (firstArg.type === 'TemplateLiteral') {
+          const last = firstArg.quasis[firstArg.quasis.length - 1].value;
+          const lastPartValue = `${last.cooked}.mjs`;
+          last.raw = lastPartValue;
+          last.cooked = lastPartValue;
+        }
+      }
+    }
+
+    const resolveURLWithImportMeta = (node) => {
+      const last = node.quasis[node.quasis.length - 1].value;
+      const lastPartValue = `${last.cooked}.mjs`;
+      last.raw = lastPartValue;
+      last.cooked = lastPartValue;
     };
 
     switch (node.type) {
@@ -339,6 +412,9 @@ async function resolveMJSFile(jsFilePath) {
           resolve(node.source);
         }
         break;
+      }
+      default: {
+        resolveURLImportMeta(node);
       }
     }
   });
@@ -382,11 +458,36 @@ async function resolveCJSFile(jsFilePath) {
         resolveRequire(jsFilePath, requireValue, 'cjs')
           .then((resolvedRequireValue) => {
             // console.log(jsFilePath, ':', requireValue, '->', resolvedRequireValue);
-            node.value = resolvedRequireValue;
-            node.raw = JSON.stringify(resolvedRequireValue);
+            setLiteralValue(node, resolvedRequireValue);
           }),
       );
     };
+
+    const resolveURLImportMeta = (
+      node,
+    ) => {
+      if (
+        (node.type === 'NewExpression')
+        && (node.callee.type === 'Identifier')
+        && (node.callee.name === 'URL')
+        && (node.arguments.length === 2)
+        && isCJSImportMetaURLNode(node.arguments[1])
+      ) {
+        const firstArg = node.arguments[0];
+
+        if (
+          (firstArg.type === 'Literal')
+          && (typeof firstArg.value === 'string')
+        ) {
+          setLiteralValue(firstArg, `${firstArg.value}.cjs`);
+        } else if (firstArg.type === 'TemplateLiteral') {
+          const last = firstArg.quasis[firstArg.quasis.length - 1].value;
+          const lastPartValue = `${last.cooked}.cjs`;
+          last.raw = lastPartValue;
+          last.cooked = lastPartValue;
+        }
+      }
+    }
 
     switch (node.type) {
       case 'CallExpression': {  // require('./hello-world-lazy')
@@ -404,6 +505,9 @@ async function resolveCJSFile(jsFilePath) {
           resolve(node.arguments[0]);
         }
         break;
+      }
+      default: {
+        resolveURLImportMeta(node);
       }
     }
   });

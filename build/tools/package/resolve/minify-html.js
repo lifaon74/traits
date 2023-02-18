@@ -1,4 +1,4 @@
-const minify = require('html-minifier');
+const { minify } = require('html-minifier-terser');
 
 
 const DEFAULT_HTML_MINIFIER_OPTIONS = {
@@ -10,13 +10,14 @@ const DEFAULT_HTML_MINIFIER_OPTIONS = {
   removeComments: true,
   sortAttributes: true,
   sortClassName: true,
+  keepClosingSlash: true,
 };
 
 function minifyHTML(
   code,
   options = DEFAULT_HTML_MINIFIER_OPTIONS,
 ) {
-  return minify.minify(code, options);
+  return minify(code, options);
 }
 
 

@@ -25,9 +25,10 @@
     "strictPropertyInitialization": true,
     "noUnusedLocals": false,
     "suppressImplicitAnyIndexErrors": true,
+    "module": "esnext",
     "moduleResolution": "node",
     "stripInternal": false,
-    "target": "es5",
+    "target": "esnext",
     "outDir": "../dist",
     "lib": [
       "ESNext",
