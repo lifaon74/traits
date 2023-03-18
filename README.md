@@ -209,13 +209,20 @@ export function createNumberExtended(
 }
 ```
 
-> How can I du single/multi-inheritance ?
+The same is true for setters. 
 
-Because we juste create objects instead of classes this is extremely easy. Check the example above.
+The seconds point, is that, using only functions instead of getter/setters, limits the possibilities of side effects.
+
+For example, a getter may return different values on two consecutive calls, without setting/updating the value between.
+By design, it means an undefined behaviour. However, using only functions, developer know that something happen (computed property, etc...), and may expect different results.
+
+> How can I do single/multi-inheritance ?
+
+Because we just create objects instead of classes this is extremely easy. Check the example above.
 
 > What about instanceof ?
 
-Usually, you won't require it because everything is typed: if something implements an interface, we may consider it is instance of it.
+Usually, you won't require it because everything is typed: if something implements an interface, we may consider that it is an instance of it.
 
 However, with union types, you may implement some kind of `isXXXType(): boolean` for example (ex: `isNumberType(): boolean`).
 
