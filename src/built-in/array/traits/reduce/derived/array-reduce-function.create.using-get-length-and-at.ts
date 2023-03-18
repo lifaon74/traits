@@ -27,7 +27,7 @@ export function createArrayReduceFunctionUsing$GetLengthAndAt$<GValue>(
         if (getLength() == 0) {
           throw new TypeError(`Missing initialValue`);
         } else {
-          _accumulator = at(0) as unknown as GReduced;
+          _accumulator = at(0)! as GReduced;
           index = 1;
         }
       } else {
