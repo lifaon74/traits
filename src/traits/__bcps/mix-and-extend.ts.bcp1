@@ -1,0 +1,39 @@
+import { GenericAbstractClass } from '../misc/generic-abstract-class.js';
+import { TupleToIntersection } from '../misc/tuple-to-intersection.js';
+
+export type MixImplementations<GImplementations extends readonly any[]> =
+  TupleToIntersection<GImplementations>;
+
+export type MixAndExtendImplementations<GImplementations extends readonly any[]> = {
+  [GKey in keyof GImplementations]: abstract new () => GImplementations[GKey];
+};
+
+export type MixAndExtendResult<
+  GBaseClass extends GenericAbstractClass | undefined,
+  GImplementations extends readonly any[],
+> = GBaseClass extends abstract new (...args: infer GParameters) => infer GInstance
+  ? Omit<GBaseClass, 'new'> & {
+      new (...args: GParameters): GInstance & MixImplementations<GImplementations>;
+    }
+  : {
+      new (): MixImplementations<GImplementations>;
+    };
+
+export function mixAndExtend<
+  GBaseClass extends GenericAbstractClass | undefined,
+  GImplementations extends readonly any[],
+>(
+  baseClass: GBaseClass | undefined,
+  ...implementations: MixAndExtendImplementations<GImplementations>
+): MixAndExtendResult<GBaseClass, GImplementations> {
+  const _class: any = baseClass === void 0 ? class {} : class extends baseClass {};
+
+  for (let i: number = 0; i < implementations.length; i++) {
+    Object.defineProperties(
+      _class.prototype,
+      Object.getOwnPropertyDescriptors(implementations[i].prototype),
+    );
+  }
+
+  return _class;
+}

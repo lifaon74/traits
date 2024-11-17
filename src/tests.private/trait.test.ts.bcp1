@@ -1,0 +1,81 @@
+import { CONSTRUCT, IConstructKey } from './constants/construct.constant.js';
+import { NEW } from './constants/new.constant.js';
+import { _private, IPrivate, Private } from './constants/private.constant.js';
+import { mixinExtends } from './traits/mixin-extends.function.js';
+
+interface ValueOfTrait<GOut> {
+  valueOf(): GOut;
+}
+
+interface AddTrait<GIn, GOut> {
+  add(
+    value: GIn
+  ): GOut;
+}
+
+interface SubTrait {
+  sub<GSub>(sub: GSub): number;
+}
+
+abstract class NumberValueOfImplementation implements ValueOfTrait<number> {
+  valueOf(this: IPrivate<{ value: number }>): number {
+    return _private(this).value;
+  }
+}
+
+// abstract class NumberConstructImplementation {
+//   [CONSTRUCT](
+//     this: IPrivate<{
+//       value: number
+//     }>,
+//     value: number
+//   ): void {
+//     _private(this).value = value;
+//   }
+// }
+
+class NumberAddImplementation<GIn, GOut> implements AddTrait<GIn, GOut> {
+  add(this: { [NEW]: (value: number) => GOut } & IPrivate<{
+    value: number
+  }>, value: GIn & IPrivate<{ value: number }>): GOut {
+    return this[NEW](_private(this).value + _private(value).value);
+  }
+}
+
+class NumberSubImplementation implements SubTrait {
+  sub<GSub>(sub: GSub): number {
+    throw 'TODO';
+  }
+}
+
+describe('traits', () => {
+  interface INumPrivate {
+    readonly value: number;
+  }
+
+  class Num extends mixinExtends<typeof Private<INumPrivate>, [NumberValueOfImplementation, NumberAddImplementation<Num, Num>, NumberSubImplementation]>(Private, NumberValueOfImplementation, NumberAddImplementation, NumberSubImplementation) {
+
+    constructor(
+      value: number
+    ) {
+      super({
+        value
+      });
+    }
+
+    [NEW](value: number): Num {
+      return new Num(value);
+    }
+  }
+
+  it('should work', () => {
+    const a = new Num(1);
+    expect(a.valueOf()).toBe(1);
+    const b = a.add(new Num(2));
+    expect(b.valueOf()).toBe(3);
+  });
+
+  // const _a = (self: AddTrait<Num, Num>) => {
+  //   self.add(8);
+  // };
+});

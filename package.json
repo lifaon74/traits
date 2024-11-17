@@ -1,25 +1,35 @@
 {
   "name": "@lifaon/traits",
-  "version": "3.0.0",
-  "description": "Traits for javascript: mix your classes with ease",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/lifaon74/traits"
+  "version": "4.0.0",
+  "type": "module",
+  "main": "./index.js",
+  "scripts": {
+    "fb:build": "node fabrique/actions/build.js",
+    "fb:format": "prettier --write --ignore-unknown --config ./.prettierrc \"src/**/*.{js,jsx,ts,tsx,html,css,scss}\"",
+    "fb:test": "vitest",
+    "fb:test:coverage": "vitest run --coverage",
+    "fb:prod": "node fabrique/actions/build.js && cd dist && npm publish --access public --registry https://registry.npmjs.org",
+    "fb:dev": "node fabrique/actions/build.js --dev && cd dist && npm publish --quiet --registry http://localhost:4873 --tag beta",
+    "fb:dev:public": "node fabrique/actions/build.js --dev && cd dist && npm publish --access public --registry https://registry.npmjs.org --tag beta"
   },
-  "keywords": [
-    "trait",
-    "traits",
-    "factory",
-    "factories",
-    "mixin",
-    "mixins",
-    "class",
-    "classes",
-    "rust"
-  ],
-  "sideEffects": false,
-  "author": "Valentin Richard",
+  "description": "Traits in typescript",
+  "keywords": [],
+  "author": "Valentin RICHARD",
   "license": "MIT",
   "access": "public",
-  "dependencies": {}
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "prettier-plugin-organize-imports": "^4.1.0",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.4"
+  },
+  "packageManager": "yarn@4.5.1",
+  "fabrique": {
+    "version": "0.2.0",
+    "type": "lib"
+  }
 }

@@ -1,0 +1,107 @@
+import { GenericAbstractClass } from '../misc/generic-abstract-class.js';
+import { TupleToIntersection } from '../misc/tuple-to-intersection.js';
+
+export type MixImplementations<GImplementations extends readonly any[]> =
+  TupleToIntersection<GImplementations>;
+
+export type MixinImplementations<GImplementations extends readonly any[]> = {
+  [GKey in keyof GImplementations]: abstract new () => GImplementations[GKey];
+};
+
+export type MixAndExtendResult<
+  GBaseClass extends GenericAbstractClass | undefined,
+  GImplementations extends readonly any[],
+> = GBaseClass extends abstract new (...args: infer GParameters) => infer GInstance
+  ? Omit<GBaseClass, 'new'> & {
+      new (...args: GParameters): GInstance & MixImplementations<GImplementations>;
+    }
+  : {
+      new (): MixImplementations<GImplementations>;
+    };
+
+// export interface MixinOptions<
+//   GBaseClass extends GenericAbstractClass | undefined,
+//   GImplementations extends readonly any[],
+// > {
+//   readonly baseClass: GBaseClass;
+//   readonly implementations: MixinImplementations<GImplementations>;
+// }
+
+export interface MixinOptions {
+  readonly baseClass?: GenericAbstractClass | undefined;
+  readonly implementations?: readonly GenericAbstractClass[] | undefined;
+  readonly staticImplementations?: readonly GenericAbstractClass[] | undefined;
+}
+
+export type InferMixinOptionsBaseClass<GOptions extends MixinOptions> = GOptions['baseClass'];
+
+export type InferMixinOptionsImplementations<GOptions extends MixinOptions> =
+  GOptions['implementations'] extends undefined
+    ? []
+    : GOptions['implementations'] extends readonly GenericAbstractClass[]
+      ? GOptions['implementations']
+      : never;
+
+export type InferMixinOptionsStaticImplementations<GOptions extends MixinOptions> =
+  GOptions['staticImplementations'] extends undefined
+    ? []
+    : GOptions['staticImplementations'] extends readonly GenericAbstractClass[]
+      ? GOptions['staticImplementations']
+      : never;
+
+export type InferMixinInstance<GOptions extends MixinOptions> = TupleToIntersection<
+  InferMixinOptionsImplementations<GOptions>
+>;
+
+export type InferMixinStatic<GOptions extends MixinOptions> = TupleToIntersection<
+  InferMixinOptionsStaticImplementations<GOptions>
+>;
+
+// export type InferMixinResult<GOptions extends MixinOptions> =
+
+// TODO
+
+export function mixin<GOptions extends MixinOptions>(
+  options: GOptions,
+): InferMixinInstance<GOptions> {
+  const _class: any = baseClass === void 0 ? class {} : class extends baseClass {};
+
+  for (let i: number = 0; i < implementations.length; i++) {
+    Object.defineProperties(
+      _class.prototype,
+      Object.getOwnPropertyDescriptors(implementations[i].prototype),
+    );
+  }
+
+  return _class;
+}
+
+class A<T> {
+  a!: T;
+}
+
+class B<T> {
+  b!: string;
+  b_0!: T;
+}
+
+class C {
+  static D: boolean;
+
+  c!: number;
+}
+
+// type Opt = {
+//   baseClass: typeof A;
+//   implementations: [typeof B, typeof C];
+// };
+
+type Opt = {
+  baseClass: typeof A;
+  implementations: [typeof B, typeof C];
+};
+
+const a = mixin<Opt>({
+  baseClass: A,
+  implementations: [B, C],
+});

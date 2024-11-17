@@ -1,0 +1,220 @@
+import { NEW } from '../built-in/well-known/new/new.constant.js';
+import { _private, IPrivateTrait } from '../constants/private.constant.js';
+import { callImplementation } from '../traits/call-implementation.function.js';
+import { mixin } from '../traits/mixin.function.js';
+
+interface ValueOfTrait<GOut> {
+  valueOf(): GOut;
+}
+
+interface AddTrait<GIn, GOut> {
+  add(value: GIn): GOut;
+}
+
+interface SubTrait<GIn, GOut> {
+  sub(value: GIn): GOut;
+}
+
+// interface GenericTrait {
+//   generic<G>(g: G): number;
+// }
+
+abstract class ValueOfImplementationForNumberUsingPrivateValue implements ValueOfTrait<number> {
+  valueOf(this: IPrivateTrait<{ value: number }>): number {
+    return _private(this).value;
+  }
+}
+
+// abstract class NumberConstructImplementation {
+//   [CONSTRUCT](
+//     this: IPrivate<{
+//       value: number
+//     }>,
+//     value: number
+//   ): void {
+//     _private(this).value = value;
+//   }
+// }
+
+abstract class AddImplementationForNumberUsingPrivateValue<GOut>
+  implements AddTrait<IPrivateTrait<{ value: number }>, GOut>
+{
+  add(
+    this: { [NEW]: (value: number) => GOut } & IPrivateTrait<{
+      value: number;
+    }>,
+    value: IPrivateTrait<{ value: number }>,
+  ): GOut {
+    return this[NEW](_private(this).value + _private(value).value);
+  }
+}
+
+abstract class AddImplementationForNumberUsingValueOf<GOut>
+  implements AddTrait<ValueOfTrait<number>, GOut>
+{
+  add(
+    this: { [NEW]: (value: number) => GOut } & ValueOfTrait<number>,
+    value: ValueOfTrait<number>,
+  ): GOut {
+    return this[NEW]((this.valueOf() as number) + value.valueOf());
+  }
+}
+
+abstract class AddImplementationForNumberUsingValueOfAndNumber<GOut>
+  implements AddTrait<number, GOut>
+{
+  add(this: { [NEW]: (value: number) => GOut } & ValueOfTrait<number>, value: number): GOut {
+    return this[NEW]((this.valueOf() as number) + value);
+  }
+}
+
+abstract class AddImplementationForNumberUsingValueOfOrNumber<GOut>
+  implements AddTrait<number, GOut>
+{
+  add(
+    this: {
+      [NEW]: (value: number) => GOut;
+    } & ValueOfTrait<number>,
+    value: number | ValueOfTrait<number>,
+  ): GOut {
+    if (typeof value === 'number') {
+      return callImplementation<AddImplementationForNumberUsingValueOfAndNumber<GOut>, 'add'>(
+        AddImplementationForNumberUsingValueOfAndNumber,
+        'add',
+        this,
+        [value],
+      );
+    } else {
+      return callImplementation<AddImplementationForNumberUsingValueOf<GOut>, 'add'>(
+        AddImplementationForNumberUsingValueOf,
+        'add',
+        this,
+        [value],
+      );
+    }
+  }
+}
+
+abstract class SubImplementationForNumberUsingValueOf<GOut>
+  implements SubTrait<ValueOfTrait<number>, GOut>
+{
+  sub(
+    this: { [NEW]: (value: number) => GOut } & ValueOfTrait<number>,
+    value: ValueOfTrait<number>,
+  ): GOut {
+    return this[NEW]((this.valueOf() as number) - value.valueOf());
+  }
+}
+
+// class NumberGenericImplementation implements GenericTrait {
+//   generic<G>(g: G): number {
+//     throw 'TODO';
+//   }
+// }
+
+describe('traits', () => {
+  // describe('with private class', () => {
+  //   interface INumPrivate {
+  //     readonly value: number;
+  //   }
+  //
+  //   class Num extends mixinExtends<
+  //     typeof Private<INumPrivate>,
+  //     [
+  //       ValueOfImplementationForNumberUsingPrivateValue,
+  //       AddImplementationForNumberUsingValueOfOrNumber<Num>,
+  //       SubImplementationForNumberUsingValueOf<Num>,
+  //     ]
+  //   >(
+  //     Private,
+  //     ValueOfImplementationForNumberUsingPrivateValue,
+  //     AddImplementationForNumberUsingValueOfOrNumber,
+  //     SubImplementationForNumberUsingValueOf,
+  //   ) {
+  //     constructor(value: number) {
+  //       super({
+  //         value,
+  //       });
+  //     }
+  //
+  //     [NEW](value: number): Num {
+  //       return new Num(value);
+  //     }
+  //   }
+  //
+  //   it('should work', () => {
+  //     const a = new Num(1);
+  //     expect(a.valueOf()).toBe(1);
+  //     const b = a.add(new Num(2));
+  //     expect(b.valueOf()).toBe(3);
+  //     const c = a.sub(new Num(2));
+  //     expect(c.valueOf()).toBe(-1);
+  //     const d = a.sub(3);
+  //     expect(d.valueOf()).toBe(-2);
+  //     const e = callImplementation<SubImplementationForNumberUsingValueOf<Num>, 'sub'>(
+  //       SubImplementationForNumberUsingValueOf,
+  //       'sub',
+  //       new Num(1),
+  //       [new Num(5)],
+  //     );
+  //     expect(e.valueOf()).toBe(-4);
+  //   });
+  //
+  //   const _a = (self: AddTrait<Num | number, Num>) => {
+  //     expect(self.add(8).valueOf()).toBe(12);
+  //   };
+  //
+  //   _a(new Num(4));
+  // });
+
+  describe('with private field', () => {
+    class Num
+      extends mixin<
+        [
+          AddImplementationForNumberUsingValueOfOrNumber<Num>,
+          SubImplementationForNumberUsingValueOf<Num>,
+        ]
+      >(AddImplementationForNumberUsingValueOfOrNumber, SubImplementationForNumberUsingValueOf)
+      implements ValueOfTrait<number>
+    {
+      readonly #value: number;
+
+      constructor(value: number) {
+        super();
+        this.#value = value;
+      }
+
+      [NEW](value: number): Num {
+        return new Num(value);
+      }
+
+      valueOf(): number {
+        return this.#value;
+      }
+    }
+
+    it('should work', () => {
+      const a = new Num(1);
+      expect(a.valueOf()).toBe(1);
+      const b = a.add(new Num(2));
+      expect(b.valueOf()).toBe(3);
+      const c = a.sub(new Num(2));
+      expect(c.valueOf()).toBe(-1);
+      const d = a.sub(3);
+      expect(d.valueOf()).toBe(-2);
+      const e = callImplementation<SubImplementationForNumberUsingValueOf<Num>, 'sub'>(
+        SubImplementationForNumberUsingValueOf,
+        'sub',
+        new Num(1),
+        [new Num(5)],
+      );
+      expect(e.valueOf()).toBe(-4);
+    });
+
+    const _a = (self: AddTrait<Num | number, Num>) => {
+      expect(self.add(8).valueOf()).toBe(12);
+    };
+
+    _a(new Num(4));
+  });
+});

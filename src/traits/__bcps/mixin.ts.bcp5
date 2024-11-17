@@ -1,0 +1,99 @@
+import { GenericAbstractClass } from '../misc/generic-abstract-class.js';
+import { TupleToIntersection } from '../misc/tuple-to-intersection.js';
+
+export type InferMixinResult<
+  GImplementations extends readonly any[],
+  GBaseClass extends GenericAbstractClass | undefined,
+> = GImplementations extends []
+  ? GBaseClass extends undefined
+    ? new () => {}
+    : GBaseClass
+  : GBaseClass extends undefined
+    ? new () => TupleToIntersection<GImplementations>
+    : (new () => TupleToIntersection<GImplementations>) & GBaseClass;
+
+export type MixinImplementationsInput<GImplementations extends readonly any[]> = {
+  [GKey in keyof GImplementations]: abstract new () => GImplementations[GKey];
+};
+
+/*--*/
+
+const CLASS_OWN_PROPERTIES = new Set<string>(Object.getOwnPropertyNames(class {}));
+
+export function mixin<GImplementations extends readonly any[]>(
+  implementations: MixinImplementationsInput<GImplementations>,
+): InferMixinResult<GImplementations, undefined>;
+export function mixin<
+  GImplementations extends readonly any[],
+  GBaseClass extends GenericAbstractClass,
+>(
+  implementations: MixinImplementationsInput<GImplementations>,
+  baseClass: GBaseClass,
+): InferMixinResult<GImplementations, GBaseClass>;
+export function mixin<
+  GImplementations extends readonly any[],
+  GBaseClass extends GenericAbstractClass | undefined,
+>(
+  implementations: MixinImplementationsInput<GImplementations>,
+  baseClass?: GBaseClass | undefined,
+): InferMixinResult<GImplementations, GBaseClass> {
+  const _class: any = baseClass === undefined ? class {} : class extends baseClass {};
+
+  for (const implementation of implementations) {
+    for (const name of Object.getOwnPropertyNames(implementation)) {
+      if (!CLASS_OWN_PROPERTIES.has(name)) {
+        Object.defineProperty(_class, name, Object.getOwnPropertyDescriptor(implementation, name)!);
+      }
+    }
+
+    Object.defineProperties(
+      _class.prototype,
+      Object.getOwnPropertyDescriptors(implementation.prototype),
+    );
+  }
+
+  return _class;
+}
+
+/*--*/
+
+// class A<T> {
+//   a: T;
+//   constructor(a: T) {
+//     this.a = a;
+//   }
+// }
+//
+// class B<T> {
+//   b!: string;
+//   b_0!: T;
+// }
+//
+// class C {
+//   static c(): string {
+//     return '';
+//   }
+//   c!: number;
+// }
+//
+// class D extends C {
+//   static c(): string {
+//     return super.c();
+//   }
+//
+//   d!: number;
+// }
+//
+// // const IA = implement(C, A);
+// //
+// // const ia = new IA<string>('a');
+//
+// interface Opt<T> {
+//   baseClass: typeof A;
+//   implementations: [B<T>, C];
+// }
+//
+// // const IB = mixin<[B<string>, C], typeof A>([B, C], A);
+// const IB = mixin([B, C], A);
+//
+// const ib = new IB<string>('a');

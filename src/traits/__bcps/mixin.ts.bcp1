@@ -1,0 +1,12 @@
+import { MixAndExtendImplementations, MixAndExtendResult, mixAndExtend } from './mix-and-extend.js';
+
+export type MixinResult<GImplementations extends readonly any[]> = MixAndExtendResult<
+  undefined,
+  GImplementations
+>;
+
+export function mixin<GImplementations extends readonly any[]>(
+  ...implementations: MixAndExtendImplementations<GImplementations>
+): MixinResult<GImplementations> {
+  return mixAndExtend<undefined, GImplementations>(void 0, ...implementations);
+}

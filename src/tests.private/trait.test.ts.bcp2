@@ -1,0 +1,106 @@
+import { NEW } from './constants/new.constant.js';
+import { _private, IPrivate, Private } from './constants/private.constant.js';
+import { callImplementation } from './traits/call-implementation.function.js';
+import { mixinExtends } from './traits/mixin-extends.function.js';
+
+interface ValueOfTrait<GOut> {
+  valueOf(): GOut;
+}
+
+interface AddTrait<GOut> {
+  add(value: any): GOut;
+}
+
+interface SubTrait<GOut> {
+  sub(value: any): GOut;
+}
+
+// interface GenericTrait {
+//   generic<G>(g: G): number;
+// }
+
+abstract class NumberValueOfImplementation implements ValueOfTrait<number> {
+  valueOf(this: IPrivate<{ value: number }>): number {
+    return _private(this).value;
+  }
+}
+
+// abstract class NumberConstructImplementation {
+//   [CONSTRUCT](
+//     this: IPrivate<{
+//       value: number
+//     }>,
+//     value: number
+//   ): void {
+//     _private(this).value = value;
+//   }
+// }
+
+abstract class NumberAddImplementation<GOut> implements AddTrait<GOut> {
+  add(
+    this: { [NEW]: (value: number) => GOut } & IPrivate<{
+      value: number;
+    }>,
+    value: IPrivate<{ value: number }>,
+  ): GOut {
+    return this[NEW](_private(this).value + _private(value).value);
+  }
+}
+
+abstract class NumberSubImplementation<GOut> implements SubTrait<GOut> {
+  sub(
+    this: { [NEW]: (value: number) => GOut } & ValueOfTrait<number>,
+    value: ValueOfTrait<number>,
+  ): GOut {
+    return this[NEW]((this.valueOf() as number) - value.valueOf());
+  }
+}
+
+// class NumberGenericImplementation implements GenericTrait {
+//   generic<G>(g: G): number {
+//     throw 'TODO';
+//   }
+// }
+
+describe('traits', () => {
+  interface INumPrivate {
+    readonly value: number;
+  }
+
+  class Num extends mixinExtends<
+    typeof Private<INumPrivate>,
+    [NumberValueOfImplementation, NumberAddImplementation<Num>, NumberSubImplementation<Num>]
+  >(Private, NumberValueOfImplementation, NumberAddImplementation, NumberSubImplementation) {
+    constructor(value: number) {
+      super({
+        value,
+      });
+    }
+
+    [NEW](value: number): Num {
+      return new Num(value);
+    }
+  }
+
+  it('should work', () => {
+    const a = new Num(1);
+    expect(a.valueOf()).toBe(1);
+    const b = a.add(new Num(2));
+    expect(b.valueOf()).toBe(3);
+    const c = a.sub(new Num(2));
+    expect(c.valueOf()).toBe(-1);
+    const d = a.sub(3);
+    expect(d.valueOf()).toBe(-2);
+    const e = callImplementation<NumberSubImplementation<Num>, 'sub'>(
+      NumberSubImplementation,
+      'sub',
+      new Num(1),
+      [new Num(5)],
+    );
+    expect(e.valueOf()).toBe(-4);
+  });
+
+  const _a = (self: AddTrait<Num>) => {
+    self.add(8);
+  };
+});

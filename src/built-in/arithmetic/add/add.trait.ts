@@ -1,6 +1,3 @@
-import { IAddFunction } from './add.function-definition';
-
-export interface IAddTrait<GValue, GReturn> {
-  add: IAddFunction<GValue, GReturn>;
+export interface AddTrait<GIn, GOut> {
+  add(value: GIn): GOut;
 }
-
