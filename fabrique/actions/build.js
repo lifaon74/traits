@@ -103,7 +103,7 @@ async function buildTypescriptIndexFile(cwd = process.cwd()) {
     )
   )
     .map((path) => {
-      return `export * from './${path.slice(0, -3)}.js';`;
+      return `export * from './${path.replaceAll('\\', '/').slice(0, -3)}.js';`;
     })
     .join('\n');
 
@@ -139,7 +139,7 @@ async function buildTypescriptProtectedIndexFile(cwd = process.cwd()) {
     )
   )
     .map((path) => {
-      return `export * from './${path.slice(0, -3)}.js';`;
+      return `export * from './${path.replaceAll('\\', '/').slice(0, -3)}.js';`;
     })
     .join('\n');
 

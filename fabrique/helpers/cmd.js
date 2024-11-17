@@ -12,6 +12,7 @@ export async function cmd(command, args = [], options) {
 
     const childProcess = spawn(command, args, {
       cwd: process.cwd(),
+      shell: process.platform === 'win32',
       detached: false,
       stdio: 'inherit',
       ...options,
